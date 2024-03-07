@@ -7,10 +7,10 @@ import lombok.Data;
 @Data
 public class SignUpDto {
 
-    private String Nom ;
-    private String Prenom;
-    private String Email;
-    private int Numero ;
-    private String Password ;
-    private String Role;
+    private String nom ;
+    private String prenom;
+    private String email;
+    private int numero ;
+    private String password ;
+    private String role;
 }

@@ -33,6 +33,8 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- Exemple pour MySQL -->
+
 
         <dependency>
             <groupId>com.mysql</groupId>
