@@ -15,15 +15,15 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
+    @Column(name = "nom")
+    private String nom ;
     //@Column(nullable = false)
-    private String Nom ;
-    //@Column(nullable = false)
-    private String Prenom;
+    private String prenom;
     //@Column(nullable = false,unique = true)
     private String email;
     //@Column(nullable = false)
-    private int Numero ;
+    private int numero ;
     //@Column(nullable = false)
     private String password ;
 

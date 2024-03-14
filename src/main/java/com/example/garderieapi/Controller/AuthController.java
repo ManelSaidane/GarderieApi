@@ -1,9 +1,12 @@
 package com.example.garderieapi.Controller;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import com.example.garderieapi.Repository.RoleRepository;
 import com.example.garderieapi.Repository.UserRepository;
+import com.example.garderieapi.Service.IuserService;
 import com.example.garderieapi.dto.LoginDto;
 import com.example.garderieapi.dto.SignUpDto;
 import com.example.garderieapi.entity.Role;
@@ -16,15 +19,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+
 
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
 
     @Autowired
     private AuthenticationManager authenticationManager;
