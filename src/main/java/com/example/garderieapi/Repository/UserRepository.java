@@ -1,5 +1,7 @@
 package com.example.garderieapi.Repository;
 
+
+import com.example.garderieapi.entity.Garderie;
 import com.example.garderieapi.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,6 +16,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByNom(String nom);
 
     List<User> findByRolesName(String role);
+
+    List<User> findByGarderieParent(Garderie garderie);
+
+   List<User> findByGarderieRespo(Garderie garderie);
+
+   Optional<User> findByIdAndGarderieRespo(Long id,Garderie garderie);
+
+    Optional<User> findByIdAndGarderieParent(Long id,Garderie garderie);
 
 
 }

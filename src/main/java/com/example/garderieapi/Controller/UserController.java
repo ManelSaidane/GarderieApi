@@ -13,20 +13,19 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/users")
+@RequestMapping("/v1/users")
 public class UserController {
     @Autowired
     private UserService userService;
 
     // build create User REST API
-    @PostMapping("/Create")
-    public ResponseEntity<User> createUser(@RequestBody User user){
-        User savedUser = userService.createUser(user);
-        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
-    }
+//    @PostMapping("/Create")
+//    public ResponseEntity<User> createUser(@RequestBody User user){
+//        User savedUser = userService.createUser(user);
+//        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+//    }
 
-    // build get user by id REST API
-    // http://localhost:8080/api/users/1
+
     @GetMapping("/{id}")
     public Optional<User> getUserById(@PathVariable Long id){
         //User user = userService.getUserById(id);
@@ -41,12 +40,7 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    // Build Update User REST API
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
-        userService.updateUser(id, updatedUser);
-        return ResponseEntity.ok("Paramètres de l'utilisateur mis à jour avec succès !");
-    }
+
 
     // Build Delete User REST API
     @DeleteMapping("/{id}")

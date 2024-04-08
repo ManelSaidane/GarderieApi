@@ -1,26 +1,28 @@
 package com.example.garderieapi.entity;
 
-
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 @Entity
-@Table(name = "Files")
-public class FileUpLoad {
-
+@Table(name ="Emplois")
+public class Emploi {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String FileName;
-    @Column(name = "description")
-    private String description;
 
+
+    @OneToOne
+    @JoinColumn(name = "groupe_id")
+    private Groupe groupe;
+
+//    @OneToMany
+//    @JoinColumn(name = "groupe_id")
+//    private Groupe groupe;
 }
