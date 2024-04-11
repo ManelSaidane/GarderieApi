@@ -49,7 +49,7 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return new ResponseEntity<>("User signed-in successfully!.", HttpStatus.OK);
     }
-
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignUpDto signUpDto){
 
