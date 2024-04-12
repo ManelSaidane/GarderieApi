@@ -91,9 +91,11 @@ public class GarderieService implements IGarderieService {
                     anyMatch(role -> role.getName().equals("ROLE_GARD"));
 
             if(!testRole)throw new IllegalArgumentException("! Votre Garderie introuvable.");
-
-            if (garderieRepository.findByGerant(myuser.get()).isPresent())
-                return garderieRepository.findByGerant(myuser.get()).get();
+            Optional<Garderie>garderie=garderieRepository.findByGerant(myuser.get());
+            if (garderie.isPresent()){
+                if (garderie.get().getValidation())
+                    return garderieRepository.findByGerant(myuser.get()).get();
+            }
         }
         return null;
     }
