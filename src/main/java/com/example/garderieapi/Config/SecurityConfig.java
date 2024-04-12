@@ -41,7 +41,8 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests((authorize) ->
                         authorize.requestMatchers("/v1/Auth/signin").permitAll()
-                                 .requestMatchers("/v1/Admin/**").hasRole("ADMIN")
+                                .requestMatchers("/v1/CreateGarderie").permitAll()
+                                .requestMatchers("/v1/Admin/**").hasRole("ADMIN")
                                  .requestMatchers("/v1/Garderie/**").hasRole("GARD")
                                  .requestMatchers("/v1/Responsable/**").hasRole("RESPONSABLE")
                                  .requestMatchers("/v1/Parent/**").hasRole("PARENT")

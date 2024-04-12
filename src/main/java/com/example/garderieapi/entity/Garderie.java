@@ -25,6 +25,10 @@ public class Garderie {
     @Column(nullable=false,unique = true)
     private String name;
 
+    @Column
+    private Boolean validation;
+
+
     @OneToOne
     private User gerant;
 

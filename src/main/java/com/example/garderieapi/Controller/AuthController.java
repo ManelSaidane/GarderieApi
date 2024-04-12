@@ -72,7 +72,7 @@ public class AuthController {
         if (signUpDto.getRole().equals("ROLE_GARD")) {
             garderieService.creteGarderie(signUpDto.getNom(),signUpDto.getPrenom(),
                     signUpDto.getEmail(),signUpDto.getNumero(),signUpDto.getPassword(),
-                    signUpDto.getRole(),signUpDto.getNomGarderie());
+                    signUpDto.getRole(),signUpDto.getNomGarderie(),true);
             return new ResponseEntity<>("Garderie créé", HttpStatus.CREATED);
         }else {
             User user=userService.createUser(signUpDto.getNom(),signUpDto.getPrenom(),
@@ -83,6 +83,29 @@ public class AuthController {
         return new ResponseEntity<>("Admin créé", HttpStatus.CREATED);
     }
 
+
+    @PostMapping("/CreateGarderie")
+    public ResponseEntity<?> registerGarderie(@RequestBody SignUpDto signUpDto){
+
+        if (signUpDto.getNomGarderie().isEmpty())
+            return new ResponseEntity<>("Saisir le nom de garderie !", HttpStatus.BAD_REQUEST);
+
+        if(userRepository.existsByEmail(signUpDto.getEmail()))
+            return new ResponseEntity<>("! Email c'est déjà existé", HttpStatus.BAD_REQUEST);
+
+        if(!signUpDto.getPassword().equals(signUpDto.getPasswordConfirm()))
+            return new ResponseEntity<>("! Vérifiez le mot de passe", HttpStatus.BAD_REQUEST);
+
+
+
+
+
+        String result=garderieService.creteGarderie(signUpDto.getNom(),signUpDto.getPrenom(),
+                signUpDto.getEmail(),signUpDto.getNumero(),signUpDto.getPassword(),
+                "ROLE_GARD",signUpDto.getNomGarderie(),false);
+        if (result.equals("Garderie créé")) return new ResponseEntity<>(result, HttpStatus.CREATED);
+        return new ResponseEntity<>("Admin créé", HttpStatus.CREATED);
+    }
 
     @PostMapping("/Garderie/create_user")
     public ResponseEntity<?> registerRespoOrParent(@RequestBody SignUpDto signUpDto){

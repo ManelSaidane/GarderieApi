@@ -9,7 +9,7 @@ public interface IGarderieService {
     String creteGarderie(String nom, String prenom,
                          String email, int numero,
                          String password, String role,
-                         String nomGarderie);
+                         String nomGarderie,Boolean validation);
 
     Garderie getGarderieById(Long id);
     List<Garderie> getAllGarderie();
@@ -21,4 +21,9 @@ public interface IGarderieService {
     String deleteGarderir(Long garderieId);
 
     String updateGarderie(Long garderieId, String nomGarderie);
+
+    String verificationGarderie(Long garderieId);
+
+    //------------------------ get Garderie by verification  ----------------------------------
+    List<Garderie> getGarderieByVerification(Boolean valid);
 }
