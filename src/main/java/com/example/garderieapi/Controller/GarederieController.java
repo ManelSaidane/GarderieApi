@@ -53,7 +53,7 @@ public class GarederieController {
         return new ResponseEntity<>(garderie, HttpStatus.FOUND);
     }
 
-    @GetMapping("/Admin/AllGerants")
+    @GetMapping("/Admin/AllGerantsV2")
     public ResponseEntity<List<User>> getGerants(){
 
         List<User> garderies=garderieService.getGerants();

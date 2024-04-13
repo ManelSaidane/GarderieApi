@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/v1")
 public class AuthController {
@@ -43,15 +43,18 @@ public class AuthController {
     }
 
     @PostMapping("/Auth/signin")
-    public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto){
+    public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto) {
+        String email = loginDto.getEmail();
+        String password = loginDto.getPassword();
 
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginDto.getEmail(), loginDto.getPassword()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return new ResponseEntity<>("User signed-in successfully!.", HttpStatus.OK);
-    }
-
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            return ResponseEntity.ok("Connexion réussie !");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Échec de l'authentification : " + e.getMessage());
+        } }
     @PostMapping("/Admin/create_user")
     public ResponseEntity<?> registerGard(@RequestBody SignUpDto signUpDto){
 

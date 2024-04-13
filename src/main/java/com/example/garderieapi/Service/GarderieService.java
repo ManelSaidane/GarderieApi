@@ -33,7 +33,7 @@ public class GarderieService implements IGarderieService {
         if(!role.equals("ROLE_GARD")){
             throw new IllegalArgumentException("! Échec: Vérifier le rôle");
         }
-        User gerant=userService.createUser(nom,prenom,email ,numero,password,role);
+        User gerant=userService.createUser(nom,prenom,email ,numero,role,password);
         userService.saveUser(gerant);
         Garderie garderie = new Garderie();
         garderie.setName(nomGarderie);

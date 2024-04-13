@@ -40,7 +40,7 @@ public class SecurityConfig {
         //http.csrf( cerf -> cerf.disable() );
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests((authorize) ->
-                        authorize.requestMatchers("/v1/Auth/signin").permitAll()
+                        authorize.requestMatchers("/v1/Auth/**").permitAll()
                                  .requestMatchers("/v1/Admin/**").hasRole("ADMIN")
                                  .requestMatchers("/v1/Garderie/**").hasRole("GARD")
                                  .requestMatchers("/v1/Responsable/**").hasRole("RESPONSABLE")
