@@ -21,6 +21,9 @@ public interface IUserService {
 
    void deleteUserById(Long userId);
 
+    //----- get Role by  username -----
+    String getRoleByUsername(String nom);
+
     User updateUser(Long userId, String nom, String prenom, String email, int numero, String password);
 
     User updatePassword(Long userId, String password, String passwordConfirm);

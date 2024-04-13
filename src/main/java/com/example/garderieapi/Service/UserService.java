@@ -2,6 +2,7 @@ package com.example.garderieapi.Service;
 
 import com.example.garderieapi.Repository.RoleRepository;
 import com.example.garderieapi.Repository.UserRepository;
+import com.example.garderieapi.Repository.UserRoleRepositoryImpl;
 import com.example.garderieapi.entity.Garderie;
 import com.example.garderieapi.entity.Role;
 import com.example.garderieapi.entity.User;
@@ -14,27 +15,24 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService implements UserDetailsService,IUserService{
+public class UserService implements UserDetailsService, IUserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
 
+    private final UserRoleRepositoryImpl userRoleRepository; // Correction du nom ici
 
-
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, UserRoleRepositoryImpl userRoleRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
+        this.userRoleRepository = userRoleRepository; // Correction ici
     }
-
     //------------------------ Auth User ----------------------------------
     @Override
     public UserDetails loadUserByUsername(String Email) throws UsernameNotFoundException {
@@ -65,6 +63,23 @@ public class UserService implements UserDetailsService,IUserService{
     public List<User> getUserByRolesName(String role) {
 
         return userRepository.findByRolesName(role);
+    }
+    //------------------------ get user name  By Roles Name ----------------------------------
+    public String getUsernameByRole(String role) {
+        // Logique pour récupérer le nom d'utilisateur en fonction du rôle
+        // Cela pourrait impliquer une requête à votre base de données ou une autre source de données
+        // Par exemple, supposons une simple logique où nous avons une liste de rôles associés à des noms d'utilisateur
+        Map<String, String> roleToUsernameMap = new HashMap<>();
+        roleToUsernameMap.put("ROLE_ADMIN", "adminUser");
+        roleToUsernameMap.put("ROLE_USER", "regularUser");
+
+        // Si le rôle existe dans la carte, retournez le nom d'utilisateur correspondant
+        if (roleToUsernameMap.containsKey(role)) {
+            return roleToUsernameMap.get(role);
+        } else {
+            // Si le rôle n'existe pas, retournez null ou une autre valeur par défaut selon votre logique métier
+            return null;
+        }
     }
 
     //------------------------ Create user ----------------------------------
@@ -104,6 +119,49 @@ public class UserService implements UserDetailsService,IUserService{
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
+
+//--- get role by email ---
+    public String getRoleByEmail(String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            Set<Role> roles = user.getRoles();
+
+            if (!roles.isEmpty()) {
+                Role role = roles.iterator().next();
+                return role.getName();
+            } else {
+                return null; // Aucun rôle trouvé pour cet utilisateur
+            }
+        } else {
+            return null; // Aucun utilisateur trouvé avec cet email
+        }
+    }
+
+    //----- get Role by  username -----
+    @Override
+    public String getRoleByUsername(String nom) {
+        User user = userRepository.findByNom(nom).stream().findFirst().orElse(null);
+
+
+        if (user != null && user.getRoles() != null && !user.getRoles().isEmpty()) {
+            Role role = user.getRoles().iterator().next(); // Sélectionner le premier rôle de l'utilisateur
+            return role.getName();
+        } else {
+            return null;
+        }
+    }
+
+
+
+
+
+
+
+
+
 
 
     //------------------------ Update user ----------------------------------

@@ -24,6 +24,8 @@ public interface IGarderieService {
 
     String verificationGarderie(Long garderieId);
 
+    String updateGarderieValidation(Long garderieId);
+
     //------------------------ get Garderie by verification  ----------------------------------
     List<Garderie> getGarderieByVerification(Boolean valid);
 }

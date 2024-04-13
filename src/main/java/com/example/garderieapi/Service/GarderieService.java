@@ -144,6 +144,18 @@ public class GarderieService implements IGarderieService {
             return "Le garderie introuvable";
 
     }
+
+    @Override
+    public String updateGarderieValidation(Long garderieId) {
+        Optional<Garderie> garderieExiste = garderieRepository.findById(garderieId);
+        if (garderieExiste.isPresent()) {
+            Garderie garderie = garderieExiste.get();
+            garderie.setValidation(!garderie.getValidation());
+            garderieRepository.save(garderie);
+            return "La validité a été modifiée";
+        }
+        return "Le garderie introuvable";
+    }
     //------------------------ get Garderie by verification  ----------------------------------
     @Override
     public List<Garderie> getGarderieByVerification(Boolean valid) {
