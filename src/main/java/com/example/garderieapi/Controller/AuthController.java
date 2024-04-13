@@ -1,75 +1,118 @@
 package com.example.garderieapi.Controller;
 
-import java.util.Collections;
 
-import com.example.garderieapi.Repository.RoleRepository;
 import com.example.garderieapi.Repository.UserRepository;
+import com.example.garderieapi.Service.*;
+
 import com.example.garderieapi.dto.LoginDto;
 import com.example.garderieapi.dto.SignUpDto;
-import com.example.garderieapi.entity.Role;
 import com.example.garderieapi.entity.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
+
+@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/v1")
 public class AuthController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final UserService userService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final GarderieService garderieService;
 
-    @PostMapping("/signin")
-    public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto){
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginDto.getEmail(), loginDto.getPassword()));
+    private final ParentService parentService;
+    private final ResponsableService responsableService;
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return new ResponseEntity<>("User signed-in successfully!.", HttpStatus.OK);
+    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, UserService userService, GarderieService garderieService, ParentService parentService, ResponsableService responsableService) {
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
+        this.userService = userService;
+        this.garderieService = garderieService;
+        this.parentService = parentService;
+        this.responsableService = responsableService;
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@RequestBody SignUpDto signUpDto){
+    @PostMapping("/Auth/signin")
+    public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto) {
+        String email = loginDto.getEmail();
+        String password = loginDto.getPassword();
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            return ResponseEntity.ok("Connexion réussie !");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Échec de l'authentification : " + e.getMessage());
+        } }
+    @PostMapping("/Admin/create_user")
+    public ResponseEntity<?> registerGard(@RequestBody SignUpDto signUpDto){
+
+        if (signUpDto.getNomGarderie().isEmpty())
+            return new ResponseEntity<>("Saisir le nom de garderie !", HttpStatus.BAD_REQUEST);
+
+        if(userRepository.existsByEmail(signUpDto.getEmail()))
+            return new ResponseEntity<>("! Email c'est déjà existé", HttpStatus.BAD_REQUEST);
+
+        if(!signUpDto.getPassword().equals(signUpDto.getPasswordConfirm()))
+            return new ResponseEntity<>("! Vérifiez le mot de passe", HttpStatus.BAD_REQUEST);
+
+        if (!signUpDto.getRole().equals("ROLE_ADMIN") && !signUpDto.getRole().equals("ROLE_GARD"))
+            return new ResponseEntity<>("! Vérifiez le rôle ", HttpStatus.BAD_REQUEST);
+
+
+
+        if (signUpDto.getRole().equals("ROLE_GARD")) {
+            garderieService.creteGarderie(signUpDto.getNom(),signUpDto.getPrenom(),
+                    signUpDto.getEmail(),signUpDto.getNumero(),signUpDto.getPassword(),
+                    signUpDto.getRole(),signUpDto.getNomGarderie());
+            return new ResponseEntity<>("Garderie créé", HttpStatus.CREATED);
+        }else {
+            User user=userService.createUser(signUpDto.getNom(),signUpDto.getPrenom(),
+                    signUpDto.getEmail(),signUpDto.getNumero(),signUpDto.getPassword(),
+                    signUpDto.getRole());
+            if (user == null) return new ResponseEntity<>("! il ya problème de création Admin", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("Admin créé", HttpStatus.CREATED);
+    }
+
+
+    @PostMapping("/Garderie/create_user")
+    public ResponseEntity<?> registerRespoOrParent(@RequestBody SignUpDto signUpDto){
 
 
         // add check for email exists in DB
         if(userRepository.existsByEmail(signUpDto.getEmail())){
             return new ResponseEntity<>("Email is already taken!", HttpStatus.BAD_REQUEST);
         }
+        String resultat="";
 
-        // create user object
-        User user = new User();
-        user.setNom(signUpDto.getNom());
-        user.setPrenom(signUpDto.getPrenom());
-        user.setEmail(signUpDto.getEmail());
-        user.setNumero(signUpDto.getNumero());
-        user.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
+        if (!signUpDto.getRole().equals("ROLE_RESPONSABLE") && !signUpDto.getRole().equals("ROLE_PARENT"))
+            return new ResponseEntity<>("Vérifiez le rôle !", HttpStatus.BAD_REQUEST);
 
-        Role roles = roleRepository.findByName(signUpDto.getRole()).get();
-        user.setRoles(Collections.singleton(roles));
+        if (signUpDto.getRole().equals("ROLE_RESPONSABLE")){
+            resultat=responsableService.createResponsable(signUpDto.getNom(),signUpDto.getPrenom(),
+                    signUpDto.getEmail(),signUpDto.getNumero(),signUpDto.getPassword(),
+                    signUpDto.getRole());
+        }else
+        {
+            resultat=parentService.createParent(signUpDto.getNom(),signUpDto.getPrenom(),
+                    signUpDto.getEmail(),signUpDto.getNumero(),signUpDto.getPassword(),
+                    signUpDto.getRole(),signUpDto.getNomEnfant(),signUpDto.getPrenomEnfant(),
+                    signUpDto.getNiveauEnfant());
+        }
 
-        userRepository.save(user);
-
-        return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
+        return new ResponseEntity<>(resultat, HttpStatus.OK);
 
     }
 }

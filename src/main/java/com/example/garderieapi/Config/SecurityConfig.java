@@ -2,11 +2,12 @@ package com.example.garderieapi.Config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,7 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
     public SecurityConfig(UserDetailsService userDetailsService){
         this.userDetailsService = userDetailsService;
@@ -36,15 +37,17 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.csrf().disable()
-                .authorizeHttpRequests((authorize) ->
-                        //authorize.anyRequest().authenticated()
-                        authorize.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
-                                .requestMatchers("/api/auth/**").permitAll()
-                                .anyRequest().authenticated()
-
+        //http.csrf( cerf -> cerf.disable() );
+        http.csrf(AbstractHttpConfigurer::disable);
+        http.authorizeHttpRequests((authorize) ->
+                        authorize.requestMatchers("/v1/Auth/**").permitAll()
+                                 .requestMatchers("/v1/Admin/**").hasRole("ADMIN")
+                                 .requestMatchers("/v1/Garderie/**").hasRole("GARD")
+                                 .requestMatchers("/v1/Responsable/**").hasRole("RESPONSABLE")
+                                 .requestMatchers("/v1/Parent/**").hasRole("PARENT")
+                                 .anyRequest().authenticated()
                 );
-
+        http.httpBasic(Customizer.withDefaults());
         return http.build();
     }
 }
