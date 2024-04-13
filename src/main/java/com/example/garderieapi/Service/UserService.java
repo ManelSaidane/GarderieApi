@@ -82,7 +82,8 @@ public class UserService implements UserDetailsService,IUserService{
 
         Role roles = roleRepository.findByName(role).get();
         user.setRoles(Collections.singleton(roles));
-        if (role.equals("ROLE_ADMIN")) userRepository.save(user);
+        //if (role.equals("ROLE_ADMIN"))
+           // userRepository.save(user);
         return user;
     }
     //------------------------ save user----------------------------------

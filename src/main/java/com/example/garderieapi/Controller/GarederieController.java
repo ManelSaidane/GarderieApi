@@ -53,9 +53,27 @@ public class GarederieController {
         return new ResponseEntity<>(garderie, HttpStatus.FOUND);
     }
 
-    @GetMapping("/Admin/AllGerantsV2")
-    public ResponseEntity<List<User>> getGerants(){
+    @GetMapping("/Admin/Garderies/validation/{valid}")
+    public ResponseEntity<List<Garderie>> getGarderieByvalidationtrue(@PathVariable Boolean valid){
 
+        List<Garderie> garderies=garderieService.getGarderieByVerification(valid);
+        if (garderies==null) return new ResponseEntity<>(garderies, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(garderies, HttpStatus.FOUND);
+    }
+
+
+    @PostMapping("/Admin/Garderie/{garderieId}/validation")
+    public ResponseEntity<String> validationGarderie(@PathVariable Long garderieId){
+
+        String result=garderieService.verificationGarderie(garderieId);
+        if (!result.equals("La validité a été modifiée")) return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(result, HttpStatus.UPGRADE_REQUIRED);
+    }
+
+
+
+    @GetMapping("/Admin/AllGerant")
+    public ResponseEntity<List<User>> getGerants(){
         List<User> garderies=garderieService.getGerants();
         if (garderies==null) return new ResponseEntity<>(garderies, HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(garderies, HttpStatus.FOUND);

@@ -28,18 +28,19 @@ public class GarderieService implements IGarderieService {
     public String creteGarderie(String nom        , String prenom,
                                 String email      , int numero,
                                 String password   , String role,
-                                String nomGarderie)
+                                String nomGarderie,Boolean validation)
     {
         if(!role.equals("ROLE_GARD")){
             throw new IllegalArgumentException("! Échec: Vérifier le rôle");
         }
         User gerant=userService.createUser(nom,prenom,email ,numero,role,password);
-        userService.saveUser(gerant);
+        userRepository.save(gerant);
         Garderie garderie = new Garderie();
         garderie.setName(nomGarderie);
         garderie.setGerant(gerant);
+        garderie.setValidation(validation);
         garderieRepository.save(garderie);
-        //user.setGarderie(garderieRepository.save(garderie));
+       // user.setGarderie(garderieRepository.save(garderie));
 
         return "Garderie créé";
     }
@@ -78,7 +79,7 @@ public class GarderieService implements IGarderieService {
     @Override
     public List<User> getGerants()
     {
-        return userRepository.findByRolesName("ROLE_GARDERIE");
+        return userRepository.findByRolesName("ROLE_GARD");
     }
 
     //------------------------ Get la Garderie Connectee ----------------------------------
@@ -90,9 +91,11 @@ public class GarderieService implements IGarderieService {
                     anyMatch(role -> role.getName().equals("ROLE_GARD"));
 
             if(!testRole)throw new IllegalArgumentException("! Votre Garderie introuvable.");
-
-            if (garderieRepository.findByGerant(myuser.get()).isPresent())
-                return garderieRepository.findByGerant(myuser.get()).get();
+            Optional<Garderie>garderie=garderieRepository.findByGerant(myuser.get());
+            if (garderie.isPresent()){
+                if (garderie.get().getValidation())
+                    return garderieRepository.findByGerant(myuser.get()).get();
+            }
         }
         return null;
     }
@@ -125,4 +128,28 @@ public class GarderieService implements IGarderieService {
         }
         return "Le garderie introuvable";
     }
+    //------------------------ verification Garderie  ----------------------------------
+    @Override
+    public String verificationGarderie(Long garderieId)
+    {
+
+            Optional<Garderie> garderieExiste = garderieRepository.findById(garderieId);
+            if (garderieExiste.isPresent()){
+                garderieExiste.get().setValidation(!garderieExiste.get().getValidation());
+
+                garderieRepository.save(garderieExiste.get());
+
+                return "La validité a été modifiée";
+            }
+            return "Le garderie introuvable";
+
+    }
+    //------------------------ get Garderie by verification  ----------------------------------
+    @Override
+    public List<Garderie> getGarderieByVerification(Boolean valid) {
+
+        return garderieRepository.findByValidation(valid);
+
+    }
+
 }
