@@ -1,11 +1,14 @@
 package com.example.garderieapi.Controller;
 
 
+import com.example.garderieapi.Repository.GarderieEnAttenteRepository;
 import com.example.garderieapi.Repository.UserRepository;
 import com.example.garderieapi.Service.*;
 
 import com.example.garderieapi.dto.LoginDto;
 import com.example.garderieapi.dto.SignUpDto;
+import com.example.garderieapi.entity.Garderie;
+import com.example.garderieapi.entity.GarderieEnAttente;
 import com.example.garderieapi.entity.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
 
 
 @CrossOrigin(origins = "*")
@@ -25,6 +30,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
 
     private final UserRepository userRepository;
+
 
     private final UserService userService;
 
@@ -55,6 +61,9 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Échec de l'authentification : " + e.getMessage());
         } }
+
+
+    ////////////////:gard
     @PostMapping("/Admin/create_user")
     public ResponseEntity<?> registerGard(@RequestBody SignUpDto signUpDto){
 
@@ -85,6 +94,7 @@ public class AuthController {
         }
         return new ResponseEntity<>("Admin créé", HttpStatus.CREATED);
     }
+
 
 
     @PostMapping("/CreateGarderie")
