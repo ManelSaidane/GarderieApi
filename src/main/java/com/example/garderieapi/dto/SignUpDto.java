@@ -12,5 +12,10 @@ public class SignUpDto {
     private String email;
     private int numero ;
     private String password ;
+    private String passwordConfirm;
     private String role;
+    private String nomGarderie="";
+    private String nomEnfant="" ;
+    private String prenomEnfant="";
+    private String niveauEnfant="";
 }
