@@ -1,5 +1,6 @@
 package com.example.garderieapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,6 +31,7 @@ public class Groupe {
 
 
     @ManyToOne (fetch = FetchType.EAGER, cascade= CascadeType.ALL)
+    @JsonIgnore
     @JoinTable(
             name="Groupe_Garderie",
             joinColumns={@JoinColumn(name="groupe_id", referencedColumnName="id")},

@@ -16,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -62,8 +63,12 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(email, password));
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+
             // Récupérer le rôle de l'utilisateur à partir de son email
-            String role = userService.getRoleByEmail(email);
+            String role = userService.getRoleByEmail(userDetails.getUsername());
+            User user = userService.getByEmail(userDetails.getUsername()).get();
 
             // Si aucun rôle n'est trouvé pour cet utilisateur, renvoyer une réponse 401 Unauthorized
             if (role == null) {
@@ -71,11 +76,8 @@ public class AuthController {
                         .body("Aucun rôle trouvé pour cet utilisateur.");
             }
 
-
-
-
             // Créer le token JWT en utilisant le nom d'utilisateur (email) et le rôle
-            String token = jwtTokenProvider.createToken(email, role ,password);
+            String token = jwtTokenProvider.createToken(user);
 
             // Préparer la réponse avec le token JWT et le rôle de l'utilisateur
             Map<String, Object> response = new HashMap<>();
@@ -183,8 +185,6 @@ public class AuthController {
                     signUpDto.getRole(),signUpDto.getNomEnfant(),signUpDto.getPrenomEnfant(),
                     signUpDto.getNiveauEnfant());
         }
-
         return new ResponseEntity<>(resultat, HttpStatus.OK);
-
     }
 }

@@ -1,5 +1,6 @@
 package com.example.garderieapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -45,6 +46,7 @@ public class User {
 
 
     @ManyToOne (fetch = FetchType.EAGER, cascade= CascadeType.ALL)
+    @JsonIgnore
     @JoinTable(
             name="Garderie_Responsable",
             joinColumns={@JoinColumn(name="responsable_id", referencedColumnName="id")},
@@ -60,6 +62,7 @@ public class User {
     private Set<Enfant> Enfants;
 
     @ManyToOne (fetch = FetchType.EAGER, cascade= CascadeType.ALL)
+    @JsonIgnore
     @JoinTable(
             name="parent_Garderie",
             joinColumns={@JoinColumn(name="parent_id", referencedColumnName="id")},

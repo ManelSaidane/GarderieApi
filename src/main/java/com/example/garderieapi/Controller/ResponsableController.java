@@ -1,8 +1,11 @@
 package com.example.garderieapi.Controller;
 
 
+import com.example.garderieapi.Repository.UserRepository;
+import com.example.garderieapi.Service.GarderieService;
 import com.example.garderieapi.Service.ResponsableService;
 import com.example.garderieapi.dto.UpdateResponsableDto;
+import com.example.garderieapi.entity.Garderie;
 import com.example.garderieapi.entity.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +20,8 @@ public class ResponsableController {
 
     private final ResponsableService responsableService;
 
-    public ResponsableController(ResponsableService responsableService) {
+
+    public ResponsableController(ResponsableService responsableService, UserRepository userRepository, GarderieService garderieService) {
         this.responsableService = responsableService;
     }
 
@@ -25,7 +29,7 @@ public class ResponsableController {
     @GetMapping("/Garderie/GetAllResponsable")
     public ResponseEntity<List<User>> GetAllResponsable() {
         List<User> responsables=responsableService.getAllResponsableByGarderie();
-        if (responsables.isEmpty()) return new  ResponseEntity<>(responsables,HttpStatus.NOT_FOUND);
+         if (responsables.isEmpty()) return new  ResponseEntity<>(responsables,HttpStatus.NOT_FOUND);
         return new  ResponseEntity<>(responsables,HttpStatus.FOUND);
     }
     @PutMapping("/Garderie/UpdateResponsable/{idResponsable}")

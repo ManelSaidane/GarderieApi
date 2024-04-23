@@ -98,7 +98,4 @@ public class GarederieController {
         if (result.equals("Le garderie introuvable")) return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(result, HttpStatus.UPGRADE_REQUIRED);
     }
-
-
-
 }

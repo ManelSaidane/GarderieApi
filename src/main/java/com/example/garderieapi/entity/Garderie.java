@@ -1,6 +1,7 @@
 package com.example.garderieapi.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,6 +31,7 @@ public class Garderie {
 
 
     @OneToOne
+    @JsonIgnore
     private User gerant;
 
 }
