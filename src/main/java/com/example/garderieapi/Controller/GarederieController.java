@@ -40,14 +40,15 @@ public class GarederieController {
         return new ResponseEntity<>(gerants, HttpStatus.OK);
     }
 
-    @GetMapping({"/Admin/Garderie/{garderieId}","/Garderie/{garderieId}"})
+
+
+    @GetMapping({"/Admin/Garderie/{garderieId}","/Garderie/{garderieId}","/Responsable/Groupe/Garderie/{garderieId}","/Parent/Garderie/{garderieId}"})
     public ResponseEntity<Garderie> getGarderieById(@PathVariable Long garderieId){
 
         Garderie garderie=garderieService.getGarderieById(garderieId);
         if (garderie==null) return new ResponseEntity<>(garderie, HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(garderie, HttpStatus.FOUND);
+        return new ResponseEntity<>(garderie, HttpStatus.OK);
     }
-
     @GetMapping("/Admin/Garderies")
     public ResponseEntity<Garderie> getGarderieById(@RequestBody String nomGarderie){
 

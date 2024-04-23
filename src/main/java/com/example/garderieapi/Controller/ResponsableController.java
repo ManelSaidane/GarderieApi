@@ -26,11 +26,14 @@ public class ResponsableController {
     }
 
 
-    @GetMapping("/Garderie/GetAllResponsable")
+    @GetMapping("/Garderie/GetAllResponsables")
     public ResponseEntity<List<User>> GetAllResponsable() {
-        List<User> responsables=responsableService.getAllResponsableByGarderie();
-         if (responsables.isEmpty()) return new  ResponseEntity<>(responsables,HttpStatus.NOT_FOUND);
-        return new  ResponseEntity<>(responsables,HttpStatus.FOUND);
+        List<User> responsables = responsableService.getAllResponsableByGarderie();
+        if (responsables.isEmpty()) {
+            return new ResponseEntity<>(responsables, HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(responsables, HttpStatus.OK);
+        }
     }
     @PutMapping("/Garderie/UpdateResponsable/{idResponsable}")
     public ResponseEntity<String> Update1Responsable(@PathVariable Long idResponsable,

@@ -77,7 +77,7 @@ public class AuthController {
             }
 
             // Créer le token JWT en utilisant le nom d'utilisateur (email) et le rôle
-            String token = jwtTokenProvider.createToken(user);
+            String token = jwtTokenProvider.createToken(user,password);
 
             // Préparer la réponse avec le token JWT et le rôle de l'utilisateur
             Map<String, Object> response = new HashMap<>();

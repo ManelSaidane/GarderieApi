@@ -67,12 +67,15 @@ public class JwtTokenProvider {
 //    }
 
 
-    public String createToken(User user)  {
+
+
+    public String createToken(User user,String password)  {
         Claims claims = Jwts.claims().setSubject(user.getEmail());
         String role = userService.getRoleByEmail(user.getEmail());
         claims.put("role", role); // Ajoute le rôle de l'utilisateur aux réclamations
-        claims.put("password", user.getPassword());
-
+        claims.put("password", password);
+        Long userId = user.getId(); // Récupère l'ID du responsable
+        claims.put("userId", userId);
         Long gardId=0L;
         if (role.equals("ROLE_GARD")) {
 

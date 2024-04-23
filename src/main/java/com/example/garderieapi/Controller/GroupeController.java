@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/v1")
 public class GroupeController {
 
@@ -55,7 +56,7 @@ public class GroupeController {
     @GetMapping("/Garderie/GetGroupes")
     public ResponseEntity<List<Groupe>> getGroupeByGarderie (){
         List<Groupe> groupes=groupeService.getGroupeByGarderie();
-        return new  ResponseEntity<>(groupes,HttpStatus.FOUND);
+        return new  ResponseEntity<>(groupes,HttpStatus.OK);
     }
 
     @GetMapping("/Garderie/Groupes/{groupeId}")
@@ -83,7 +84,7 @@ public class GroupeController {
         List<Groupe> groupes=groupeService.getGroupeByResponsable();
         if (groupes==null)
             return new  ResponseEntity<>(null,HttpStatus.NOT_FOUND);
-        return new  ResponseEntity<>(groupes,HttpStatus.FOUND);
+        return new  ResponseEntity<>(groupes,HttpStatus.OK);
     }
 
     @GetMapping("/Parent/enfant/{enfantId}/groupe")

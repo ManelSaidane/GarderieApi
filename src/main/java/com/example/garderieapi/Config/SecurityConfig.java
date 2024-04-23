@@ -47,6 +47,8 @@ public class SecurityConfig {
                         .requestMatchers("/v1/Garderie/**").hasRole("GARD")
                         .requestMatchers("/v1/Responsable/**").hasRole("RESPONSABLE")
                         .requestMatchers("/v1/Parent/**").hasRole("PARENT")
+                        .requestMatchers("/api/events/**").hasRole("RESPONSABLE")
+                        .requestMatchers("/api/activites/**").hasRole("RESPONSABLE")
                         .anyRequest().authenticated()
         );
         http.httpBasic(Customizer.withDefaults());

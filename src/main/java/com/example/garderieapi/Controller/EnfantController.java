@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/v1")
 public class EnfantController {
     private final EnfantService enfantService;

@@ -6,6 +6,7 @@ import com.example.garderieapi.Repository.UserRoleRepositoryImpl;
 import com.example.garderieapi.entity.Garderie;
 import com.example.garderieapi.entity.Role;
 import com.example.garderieapi.entity.User;
+import jakarta.transaction.Transactional;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.tokens.Token;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -109,7 +111,7 @@ public class UserService implements UserDetailsService, IUserService {
 
     //------------------------ get user By Id ----------------------------------
     @Override
-    public Optional<User> getUserById(Long userId) {
+    public  Optional<User> getUserById(Long userId) {
         return userRepository.findById(userId);
     }
 
@@ -240,6 +242,44 @@ public class UserService implements UserDetailsService, IUserService {
     }
 
 
+    //----------------add user to socket channel by id ------------------------------//
+
+  /* Transactional
+
+    public void addUser(Long userId, String socketId) {
+        try {
+            User user = userRepository.findById(userId).orElse(null);
+            if (user != null) {
+                user.setSocketId(socketId);
+                userRepository.save(user);
+                System.out.println("User " + user.getId() + " connected with socket ID " + user.getSocketId());
+            } else {
+                System.out.println("User with ID " + userId + " not found.");
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to connect user: " + e.getMessage());
+            throw new RuntimeException("Failed to connect user", e);
+        }
+    }
+    //----------------remove user to socket channel by id ------------------------------//
+
+
+    @Transactional
+    public void removeUser(String socketId) {
+        try {
+            User user = userRepository.findBySocketId(socketId).orElse(null);
+            if (user != null) {
+                user.setSocketId(null);
+                userRepository.save(user);
+                System.out.println("User " + user.getId() + " disconnected");
+            } else {
+                System.out.println("User with socket ID " + socketId + " not found.");
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to disconnect user: " + e.getMessage());
+            throw new RuntimeException("Failed to disconnect user", e);
+        }
+    }*/
 
 
 }

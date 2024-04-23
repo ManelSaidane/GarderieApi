@@ -70,12 +70,12 @@ public class GarderieService implements IGarderieService {
 
     //------------------------ Get Garderie By id ----------------------------------
     @Override
-    public Garderie getGarderieById(Long gerantId) {
+    public Garderie getGarderieById(Long garderieId) {
 
         Garderie garderie = null;
-        Optional<User> gerant=userRepository.findById(gerantId);
-        if (gerant.isPresent()){
-            garderie = garderieRepository.findByGerant(gerant.get()).get();
+        Optional<Garderie> garderieGet=garderieRepository.findById(garderieId);
+        if (garderieGet.isPresent()){
+            garderie = garderieGet.get();
         }
 
         return garderie;
@@ -91,9 +91,9 @@ public class GarderieService implements IGarderieService {
 
     //------------------------ Get la Garderie Connectee ----------------------------------
     @Override
-    public Garderie GarderieConnectee(){
-        Long garderieId=0L;
-        String emailConnectee="";
+    public Garderie GarderieConnectee() {
+        Long garderieId = 0L;
+        String emailConnectee = "";
         String secretKey = "mySecretKey";
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         // Extraire le token JWT du header "Authorization"
@@ -109,13 +109,51 @@ public class GarderieService implements IGarderieService {
                     .getBody();
             garderieId = claims.get("garderieId", Long.class);
             emailConnectee = claims.get("sub", String.class);
-            Garderie garderie = garderieRepository.findById(garderieId).get();
-            if(!garderie.getValidation())return null;
-            if (emailConnectee.equals(garderie.getGerant().getEmail())) {
+            Garderie garderie = garderieRepository.findById(garderieId).orElse(null);
+            if (garderie != null && garderie.getValidation() && emailConnectee.equals(garderie.getGerant().getEmail())) {
                 return garderie;
             }
         }
+        // Aucune garderie connectée ou problème d'autorisation, retourner null
         return null;
+    }
+
+
+
+    public String Gard(){
+        Long garderieId=0L;
+        String secretKey = "mySecretKey";
+        String username="";
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+
+        // Extraire le token JWT du header "Authorization"
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+
+            // Extraire le nom d'utilisateur du token JWT
+            Claims claims = Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(token)
+                    .getBody();
+            username = claims.getSubject();
+            garderieId = claims.get("garderieId", Long.class);
+
+//            // Utiliser le nom d'utilisateur pour obtenir l'utilisateur et la garderie
+//            Optional<User> myuser = userService.findByUsername(username);
+//            if (myuser.isPresent()){
+//                boolean testRole = myuser.get().getRoles().stream().
+//                        anyMatch(role -> role.getName().equals("ROLE_GARD"));
+//
+//                if(!testRole)throw new IllegalArgumentException("! Votre Garderie introuvable.");
+//                Optional<Garderie>garderie=garderieRepository.findByGerant(myuser.get());
+//                if (garderie.isPresent()){
+//                    if (garderie.get().getValidation())
+//                        return garderieRepository.findByGerant(myuser.get()).get();
+//                }
+//            }
+        }
+        return garderieId.toString();
     }
 
     //------------------------ Delete Garderie  ----------------------------------
@@ -145,7 +183,7 @@ public class GarderieService implements IGarderieService {
         }
         return "Le garderie introuvable";
     }
-    //------------------------ verification Garderie  ----------------------------------
+    //------------------------ verification Garderie  ----------------------------------GET
     @Override
     public String verificationGarderie(Long garderieId)
     {

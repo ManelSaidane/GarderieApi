@@ -29,6 +29,8 @@ public class User {
     private String password ;
 
 
+
+
     @ManyToMany(fetch = FetchType.EAGER, cascade= CascadeType.ALL)
     @JoinTable(
             name="user_roles",
@@ -68,4 +70,6 @@ public class User {
             joinColumns={@JoinColumn(name="parent_id", referencedColumnName="id")},
             inverseJoinColumns={@JoinColumn(name="garderie_id", referencedColumnName="id")})
     private Garderie garderieParent;
+
+
 }

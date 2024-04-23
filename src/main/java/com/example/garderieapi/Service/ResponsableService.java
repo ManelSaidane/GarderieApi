@@ -4,8 +4,16 @@ package com.example.garderieapi.Service;
 import com.example.garderieapi.Repository.UserRepository;
 import com.example.garderieapi.entity.Garderie;
 import com.example.garderieapi.entity.User;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,10 +54,15 @@ public class ResponsableService implements IResponsableService{
 
     //------------------------ get all Responsables ----------------------------------
     @Override
-    public List<User> getAllResponsableByGarderie(){
-        Garderie garderie=garderieService.GarderieConnectee();
-        if (garderie==null) throw new IllegalArgumentException("! Échec: il ya problème d'autorisation");
-        return userService.getResponsableByGarderie(garderie);
+    public List<User> getAllResponsableByGarderie() {
+        Garderie garderie = garderieService.GarderieConnectee();
+        if (garderie == null) {
+            // Aucune garderie connectée, retourner une liste vide
+            return Collections.emptyList();
+        } else {
+            // Garderie connectée, retourner les responsables de cette garderie
+            return userService.getResponsableByGarderie(garderie);
+        }
     }
 
 
@@ -72,14 +85,31 @@ public class ResponsableService implements IResponsableService{
 
     @Override
     public User ResponsableConnectee(){
-        Optional<User> myuser = userService.UserConnectee();
-        if (myuser.isPresent()){
-            boolean testRole = myuser.get().getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_RESPONSABLE"));
-            if(!testRole){
-                return null;
+
+        String emailConnectee="";
+        String roleConnectee="";
+        String secretKey = "mySecretKey";
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        // Extraire le token JWT du header "Authorization"
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+
+            // Extraire le nom d'utilisateur du token JWT
+            Claims claims = Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(token)
+                    .getBody();
+            emailConnectee = claims.get("sub", String.class);
+            roleConnectee = claims.get("role", String.class);
+            User user=userService.getByEmail(emailConnectee).get();
+            if(user.getGarderieRespo().getValidation() &&
+                    roleConnectee.equals("ROLE_RESPONSABLE")){
+                return user;
             }
-            return myuser.get();
-        } return null;
+        }
+        return null;
     }
     //------------------------ get Responsable by id ----------------------------------
 
