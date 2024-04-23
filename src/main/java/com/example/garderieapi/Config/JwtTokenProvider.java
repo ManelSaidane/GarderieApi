@@ -82,7 +82,7 @@ public class JwtTokenProvider {
 
         } else if (role.equals("ROLE_RESPONSABLE")){
             gardId = user.getGarderieRespo().getId();
-        }else if (role.equals("ROLE_RPARENT")) {
+        }else if (role.equals("ROLE_PARENT")) {
             gardId = user.getGarderieParent().getId();
         }
 

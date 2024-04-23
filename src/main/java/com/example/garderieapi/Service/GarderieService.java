@@ -110,6 +110,7 @@ public class GarderieService implements IGarderieService {
             garderieId = claims.get("garderieId", Long.class);
             emailConnectee = claims.get("sub", String.class);
             Garderie garderie = garderieRepository.findById(garderieId).get();
+            if(!garderie.getValidation()) return null;
             if (emailConnectee.equals(garderie.getGerant().getEmail())) {
                 return garderie;
             }
