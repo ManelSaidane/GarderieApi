@@ -1,0 +1,31 @@
+////////////////:gard
+  @PostMapping("/Admin/create_user")
+    public ResponseEntity<?> registerGard(@RequestBody SignUpDto signUpDto){
+
+        if (signUpDto.getNomGarderie().isEmpty())
+            return new ResponseEntity<>("Saisir le nom de garderie !", HttpStatus.BAD_REQUEST);
+
+        if(userRepository.existsByEmail(signUpDto.getEmail()))
+            return new ResponseEntity<>("! Email c'est déjà existé", HttpStatus.BAD_REQUEST);
+
+        if(!signUpDto.getPassword().equals(signUpDto.getPasswordConfirm()))
+            return new ResponseEntity<>("! Vérifiez le mot de passe", HttpStatus.BAD_REQUEST);
+
+        if (!signUpDto.getRole().equals("ROLE_ADMIN") && !signUpDto.getRole().equals("ROLE_GARD"))
+            return new ResponseEntity<>("! Vérifiez le rôle ", HttpStatus.BAD_REQUEST);
+
+
+
+        if (signUpDto.getRole().equals("ROLE_GARD")) {
+            garderieService.creteGarderie(signUpDto.getNom(),signUpDto.getPrenom(),
+                    signUpDto.getEmail(),signUpDto.getNumero(),signUpDto.getPassword(),
+                    signUpDto.getRole(),signUpDto.getNomGarderie(),true);
+            return new ResponseEntity<>("Garderie créé", HttpStatus.CREATED);
+        }else {
+            User user=userService.createUser(signUpDto.getNom(),signUpDto.getPrenom(),
+                    signUpDto.getEmail(),signUpDto.getNumero(),signUpDto.getPassword(),
+                    signUpDto.getRole());
+            if (user == null) return new ResponseEntity<>("! il ya problème de création Admin", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("Admin créé", HttpStatus.CREATED);
+    }
