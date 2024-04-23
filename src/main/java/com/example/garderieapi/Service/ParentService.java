@@ -5,7 +5,12 @@ import com.example.garderieapi.Repository.UserRepository;
 import com.example.garderieapi.entity.Garderie;
 import com.example.garderieapi.entity.User;
 import com.example.garderieapi.entity.Enfant;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Collections;
 import java.util.List;
@@ -80,14 +85,30 @@ public class ParentService implements IParentService {
     }
     @Override
     public User ParentConnectee(){
-        Optional<User> myuser = userService.UserConnectee();
-        if (myuser.isPresent()){
-            boolean testRole = myuser.get().getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_PARENT"));
-            if(!testRole){
-                throw new IllegalArgumentException("! Parent introuvable.");
+        String emailConnectee="";
+        String roleConnectee="";
+        String secretKey = "mySecretKey";
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        // Extraire le token JWT du header "Authorization"
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+
+            // Extraire le nom d'utilisateur du token JWT
+            Claims claims = Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(token)
+                    .getBody();
+            emailConnectee = claims.get("sub", String.class);
+            roleConnectee = claims.get("role", String.class);
+            User user=userService.getByEmail(emailConnectee).get();
+            if(user.getGarderieParent().getValidation() &&
+                    roleConnectee.equals("ROLE_PARENT")){
+                return user;
             }
-            return myuser.get();
-        } return null;
+        }
+        return null;
     }
 
     //------------------------ Update Parent ----------------------------------
