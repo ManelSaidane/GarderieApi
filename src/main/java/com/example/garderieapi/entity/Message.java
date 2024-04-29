@@ -8,9 +8,8 @@ import java.util.Date;
 
 @Entity
 @Table(name = "messages")
+@Data
 @NoArgsConstructor
-@Getter
-@Setter
 public class Message {
 
     @Id

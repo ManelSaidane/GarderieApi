@@ -103,10 +103,12 @@ public class ResponsableService implements IResponsableService{
                     .getBody();
             emailConnectee = claims.get("sub", String.class);
             roleConnectee = claims.get("role", String.class);
-            User user=userService.getByEmail(emailConnectee).get();
-            if(user.getGarderieRespo().getValidation() &&
-                    roleConnectee.equals("ROLE_RESPONSABLE")){
-                return user;
+            if (!roleConnectee.equals("ROLE_RESPONSABLE")) return null;
+            Optional<User> user=userService.getByEmail(emailConnectee);
+            if (user.isPresent()) {
+                if (user.get().getGarderieRespo().getValidation()) {
+                    return user.get();
+                }
             }
         }
         return null;

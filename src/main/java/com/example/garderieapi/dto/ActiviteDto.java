@@ -8,9 +8,8 @@ import java.time.LocalDate;
 public class ActiviteDto {
 
     private Long id;
-    private String nom;
-    private String date;
-    private String heure;
-    private Long responsableId;
+    private String nom="";
+    private String date="";
+    private String heure="";
 
 }
