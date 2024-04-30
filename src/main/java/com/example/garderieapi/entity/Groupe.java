@@ -2,18 +2,15 @@ package com.example.garderieapi.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
-@Setter
-@Getter
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Data
 @Table(name="Groupes")
 public class Groupe {
     @Id

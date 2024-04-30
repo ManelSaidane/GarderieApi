@@ -3,8 +3,7 @@ package com.example.garderieapi.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter
-@Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
