@@ -49,6 +49,9 @@ public class SecurityConfig {
                         .requestMatchers("/v1/Parent/**").hasRole("PARENT")
                         .requestMatchers("/api/events/**").hasRole("RESPONSABLE")
                         .requestMatchers("/api/activites/**").hasRole("RESPONSABLE")
+                        .requestMatchers("/api/fournitures").hasRole("RESPONSABLE")
+                        .requestMatchers("/chat").permitAll()
+
                         .anyRequest().authenticated()
         );
         http.httpBasic(Customizer.withDefaults());
