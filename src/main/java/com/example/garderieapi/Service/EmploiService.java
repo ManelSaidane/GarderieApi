@@ -5,16 +5,20 @@ import com.example.garderieapi.Repository.EnfantRepository;
 import com.example.garderieapi.Repository.GroupeRepository;
 import com.example.garderieapi.entity.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
+import org.apache.commons.io.FilenameUtils;
+
 
 @Service
 public class EmploiService implements IEmploiService{
@@ -46,8 +50,7 @@ public class EmploiService implements IEmploiService{
 
         if (!(file.getOriginalFilename().toLowerCase().endsWith(".jpg") ||
                 !file.getOriginalFilename().toLowerCase().endsWith(".jpeg") ||
-                !file.getOriginalFilename().toLowerCase().endsWith(".png") ||
-                !file.getOriginalFilename().toLowerCase().endsWith(".pdf")))
+                !file.getOriginalFilename().toLowerCase().endsWith(".png")))
         {
             return new  ResponseEntity<>("Vérifier type de vote ficher",HttpStatus.BAD_REQUEST);
         }
@@ -85,14 +88,14 @@ public class EmploiService implements IEmploiService{
     //------------------------ Get Emploi by groupe id for garderie ----------------------------------
 
     @Override
-    public Emploi getEmploiByGroupeForGarderie(Long groupeId) {
+    public ResponseEntity<byte[]> getEmploiByGroupeForGarderie(Long groupeId) throws IOException {
         Garderie garderie= garderieService.GarderieConnectee();
         if (garderie == null) throw new IllegalArgumentException("! accès interdit");
         Optional<Groupe> groupe=groupeRepository.findByIdAndGarderie(groupeId,garderie);
         if (groupe.isPresent()){
             Optional<Emploi> emploi=emploiRepository.findByGroupe(groupe.get());
             if (emploi.isPresent()){
-                return emploi.get();
+                return getEmploiById(emploi.get().getId());
             }
         }else throw new IllegalArgumentException("! Groupe introuvable");
         return null;
@@ -103,7 +106,7 @@ public class EmploiService implements IEmploiService{
     //------------------------ Get Emploi by groupe id for responsable ----------------------------------
 
     @Override
-    public Emploi getEmploiByGroupeForResponsable(Long groupeId) {
+    public ResponseEntity<byte[]> getEmploiByGroupeForResponsable(Long groupeId) throws IOException {
         User responsable = responsableService.ResponsableConnectee();
         if (responsable == null) throw new IllegalArgumentException("! accès interdit");
         Optional<Groupe> groupe=groupeRepository.findById(groupeId);
@@ -111,7 +114,7 @@ public class EmploiService implements IEmploiService{
             if (groupe.get().getResponsables().contains(responsable)){
                 Optional<Emploi> emploi=emploiRepository.findByGroupe(groupe.get());
                 if (emploi.isPresent()){
-                    return emploi.get();
+                    return getEmploiById(emploi.get().getId());
                 }
             }else throw new IllegalArgumentException("! accès interdit");
         }else throw new IllegalArgumentException("! Groupe introuvable");
@@ -121,18 +124,17 @@ public class EmploiService implements IEmploiService{
     //------------------------ Get Emploi by enfant id for parent ----------------------------------
 
     @Override
-    public Emploi getEmploiByEnfantForParent(Long enfantId) {
+    public ResponseEntity<byte[]> getEmploiByEnfantForParent(Long enfantId) throws IOException {
         User parent = parentService.ParentConnectee();
         if (parent == null) throw new IllegalArgumentException("! accès interdit");
         Optional<Enfant> enfant=enfantRepository.findById(enfantId);
         if (enfant.isPresent()){
             if (parent.getEnfants().contains(enfant.get())){
                 Optional<Emploi> emploi= emploiRepository.findByGroupe(enfant.get().getGroupe());
-                if (emploi.isPresent()) return emploi.get();
+                return getEmploiById(emploi.get().getId());
             }else throw new IllegalArgumentException("! Enfant introuvable");
 
         }else throw new IllegalArgumentException("! Parent introuvable");
-        return null;
     }
 
 
@@ -180,6 +182,43 @@ public class EmploiService implements IEmploiService{
             return "Emploi supprimé avec succès";
         }
         return "Groupe introuvable";
+    }
+
+
+    public ResponseEntity<byte[]> getEmploiById(Long id) throws IOException {
+        Emploi emploi = emploiRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Emploi introuvable avec l'ID : " + id));
+
+        String filePath = "files/Emploi/" + emploi.getFileName();
+        Path path = Paths.get(filePath);
+
+        if (!Files.exists(path)) {
+            throw new RuntimeException("Fichier d'emploi introuvable : " + filePath);
+        }
+
+        byte[] data = Files.readAllBytes(path);
+
+        // Determine type  file
+        String contentType = getContentType(emploi.getFileName());
+
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(data);
+    }
+
+    private String getContentType(String fileName) {
+        String extension = FilenameUtils.getExtension(fileName);
+        switch (extension.toLowerCase()) {
+            case "png":
+                return "image/png";
+            case "jpg":
+                return "image/jpg";
+            case "jpeg":
+                return "image/jpeg";
+            default:
+                return "application/octet-stream";
+        }
     }
 
 }

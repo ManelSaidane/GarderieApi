@@ -25,9 +25,9 @@ public class GarederieController {
     }
     @JsonIgnore
     @GetMapping("/Admin/allGarderie")
-    public ResponseEntity<List<Garderie>> getAllGardedrie(){
+    public ResponseEntity<List<Garderie>> getAllGardedrie(@RequestParam int page,@RequestParam int size ){
 
-        List<Garderie> allGarderie= garderieService.getAllGarderie();
+        List<Garderie> allGarderie= garderieService.getAllGarderie(page, size);
         if (allGarderie.isEmpty()) return new ResponseEntity<>(allGarderie, HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(allGarderie, HttpStatus.OK);
     }

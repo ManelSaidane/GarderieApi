@@ -3,10 +3,13 @@ package com.example.garderieapi.Controller;
 import com.example.garderieapi.Service.EmploiService;
 import com.example.garderieapi.dto.EmploiDto;
 import com.example.garderieapi.entity.Emploi;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/v1")
@@ -25,26 +28,20 @@ public class EmploiController {
     }
 
     @GetMapping("/Garderie/Groupe/{idGroupe}/Emploi")
-    public ResponseEntity<Emploi> getEmploiForGarderie(@PathVariable Long idGroupe) {
-        if (emploiService.getEmploiByGroupeForGarderie(idGroupe)==null)
-            return new ResponseEntity<>(emploiService.getEmploiByGroupeForGarderie(idGroupe), HttpStatus.NOT_FOUND);
+    public ResponseEntity<byte[]> getEmploiForGarderie(@PathVariable Long idGroupe) throws IOException {
 
-        return new ResponseEntity<>(emploiService.getEmploiByGroupeForGarderie(idGroupe), HttpStatus.FOUND);
+
+        return emploiService.getEmploiByGroupeForGarderie(idGroupe);
     }
 
     @GetMapping("/Responsable/Groupe/{idGroupe}/Emploi")
-    public ResponseEntity<Emploi> getEmploiForResponsable(@PathVariable Long idGroupe) {
-        if (emploiService.getEmploiByGroupeForResponsable(idGroupe)==null)
-            return new ResponseEntity<>(emploiService.getEmploiByGroupeForResponsable(idGroupe), HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(emploiService.getEmploiByGroupeForResponsable(idGroupe), HttpStatus.FOUND);
+    public ResponseEntity<byte[]> getEmploiForResponsable(@PathVariable Long idGroupe) throws IOException {
+        return emploiService.getEmploiByGroupeForResponsable(idGroupe);
     }
 
     @GetMapping("/Parent/{enfantId}/Emploi")
-    public ResponseEntity<Emploi> getEmploiForParent(@PathVariable Long enfantId) {
-        if (emploiService.getEmploiByEnfantForParent(enfantId)==null)
-            return new ResponseEntity<>(emploiService.getEmploiByEnfantForParent(enfantId), HttpStatus.NOT_FOUND);
-
-        return new ResponseEntity<>(emploiService.getEmploiByEnfantForParent(enfantId), HttpStatus.FOUND);
+    public ResponseEntity<byte[]> getEmploiForParent(@PathVariable Long enfantId) throws IOException {
+        return emploiService.getEmploiByGroupeForResponsable(enfantId);
     }
 
 
