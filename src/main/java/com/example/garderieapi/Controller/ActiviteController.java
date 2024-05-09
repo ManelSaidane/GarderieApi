@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/v1/")
 public class ActiviteController {
 
@@ -22,7 +23,7 @@ public class ActiviteController {
 
     public ActiviteController(ActiviteService activiteService) {
         this.activiteService = activiteService;
-;
+        ;
     }
 
     @DeleteMapping({"Garderie/Activite/{id}","Responsable/Activite/{id}"})
@@ -46,7 +47,7 @@ public class ActiviteController {
     public ResponseEntity<List<Activite> > getAllActivite() {
         List<Activite> activites= activiteService.getAllActivites();
         if (activites==null) return new ResponseEntity<>(activites, HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(activites, HttpStatus.FOUND);
+        return new ResponseEntity<>(activites, HttpStatus.OK);
     }
 
     @PutMapping({"Garderie/Activite/{id}/update","Responsable/Activite/{id}/update"})
@@ -67,4 +68,3 @@ public class ActiviteController {
     }
 
 }
-

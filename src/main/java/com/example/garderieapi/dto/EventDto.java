@@ -11,9 +11,8 @@ public class EventDto {
     private String titre;
     private String date;
     private int nombreJours;
-    private String responsable;
     private String description;
-    private Long idResponsable;
+
 }
 
 

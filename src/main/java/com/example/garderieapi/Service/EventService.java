@@ -42,12 +42,17 @@ public class EventService  implements  EventServiceImpl {
         if (existingEvent == null) {
             return "Événement introuvable";
         }
+
         // Mettre à jour les propriétés de l'événement existant avec les données du DTO
-        // Implémenter le mapping manuellement
-        // ...
+        existingEvent.setTitre(eventDto.getTitre());
+        existingEvent.setDate(eventDto.getDate());
+        existingEvent.setNombreJours(eventDto.getNombreJours());
+        existingEvent.setDescription(eventDto.getDescription());
+
         eventRepository.save(existingEvent);
         return "Événement mis à jour";
     }
+
 
     @Override
     public String deleteEvent(Long id) {
@@ -69,7 +74,6 @@ public class EventService  implements  EventServiceImpl {
         eventDto.setTitre(event.getTitre());
         eventDto.setDate(event.getDate());
         eventDto.setNombreJours(event.getNombreJours());
-        eventDto.setResponsable(event.getResponsable());
         eventDto.setDescription(event.getDescription());
         return eventDto;
     }
@@ -83,7 +87,6 @@ public class EventService  implements  EventServiceImpl {
         event.setTitre(eventDto.getTitre());
         event.setDate(eventDto.getDate());
         event.setNombreJours(eventDto.getNombreJours());
-        event.setResponsable(eventDto.getResponsable());
         event.setDescription(eventDto.getDescription());
         return event;
     }

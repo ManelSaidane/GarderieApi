@@ -1,4 +1,4 @@
-package com.example.garderieapi.config;
+package com.example.garderieapi.Config;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;

@@ -26,14 +26,13 @@ public class CorsConfig implements Filter , WebMvcConfigurer {
         HttpServletResponse response = (HttpServletResponse) res;
         HttpServletRequest request = (HttpServletRequest) req;
 
-        // Allow all origins
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
         response.setHeader("Access-Control-Max-Age", "3600");
         response.setHeader("Access-Control-Allow-Headers", "*");
 
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-            // Allow the preflight request by responding with the necessary headers
+
             response.setStatus(HttpServletResponse.SC_OK);
         } else {
             chain.doFilter(req, res);

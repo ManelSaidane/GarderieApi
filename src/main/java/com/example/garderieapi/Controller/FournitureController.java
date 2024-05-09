@@ -28,5 +28,14 @@ public class FournitureController {
     public void removeFourniture(@PathVariable Long id) {
         fournitureService.removeFourniture(id);
     }
-}
 
+    @PutMapping("/updatefourniture/{id}")
+    public Fourniture updateFourniture(@PathVariable Long id, @RequestBody Fourniture fourniture) {
+        return fournitureService.updateFourniture(id, fourniture);
+    }
+    @GetMapping("/fournituresParNom/{nom}")
+    public List<Fourniture> getFournituresParNom(@PathVariable String nom) {
+        return fournitureService.getFournituresParNom(nom);
+    }
+
+}

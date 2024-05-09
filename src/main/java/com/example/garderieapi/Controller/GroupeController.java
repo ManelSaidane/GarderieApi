@@ -43,7 +43,7 @@ public class GroupeController {
 
 
 
-    @PutMapping("/Garderie/UpdateGroupe/{id}")
+    @PutMapping({"/Garderie/UpdateGroupe/{id}","/Responsable/UpdateGroupe/{id}"})
     public ResponseEntity<String> updateGroupe(@PathVariable Long id, @RequestBody GroupeDto updatedGroupeDto) {
 
         Groupe updatedGroupe = groupeService.updateGroupe(id,updatedGroupeDto.getNom(),

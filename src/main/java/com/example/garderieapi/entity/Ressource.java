@@ -10,22 +10,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
-
-@Getter
-@Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
 @Entity
-public class Event {
+public class Ressource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String titre;
-    private String date;
-    private int nombreJours;
+
+    private int nbrPieces;
     private String description;
+    private double prix;
+    private String fournisseurs;
 
 
 }
-

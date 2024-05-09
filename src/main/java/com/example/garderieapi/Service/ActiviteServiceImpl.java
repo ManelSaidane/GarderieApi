@@ -20,5 +20,4 @@ public interface ActiviteServiceImpl  {
         String updateActivite(Long id, String nom, String date, String heure);
 
 
-    }
-
+}

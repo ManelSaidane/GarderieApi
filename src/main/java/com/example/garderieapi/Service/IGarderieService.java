@@ -12,7 +12,7 @@ public interface IGarderieService {
                          String nomGarderie,Boolean validation);
 
     Garderie getGarderieById(Long id);
-    List<Garderie> getAllGarderie();
+    List<Garderie> getAllGarderie(int page, int size) ;
     Garderie getGarderieByNom(String nomGarderie);
     List<User> getGerants();
 

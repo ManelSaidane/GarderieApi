@@ -5,6 +5,8 @@ import com.example.garderieapi.Repository.UserRepository;
 import com.example.garderieapi.entity.Garderie;
 import com.example.garderieapi.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -47,16 +49,17 @@ public class GarderieService implements IGarderieService {
         garderie.setGerant(gerant);
         garderie.setValidation(validation);
         garderieRepository.save(garderie);
-       // user.setGarderie(garderieRepository.save(garderie));
+        // user.setGarderie(garderieRepository.save(garderie));
 
         return "Garderie créé";
     }
 
     //------------------------ Get all Garderies  ----------------------------------
     @Override
-    public List<Garderie> getAllGarderie() {
-
-        return garderieRepository.findAll();
+    public List<Garderie> getAllGarderie(int page, int size) {
+        Pageable pageable= PageRequest.of(page, size);
+        List<Garderie> garderies= garderieRepository.findAll(pageable).getContent();
+        return garderies;
     }
 
     //------------------------ Get Garderies By nom ----------------------------------
@@ -114,47 +117,13 @@ public class GarderieService implements IGarderieService {
                 return garderie;
             }
         }
-        // Aucune garderie connectée ou problème d'autorisation, retourner null
+        //
         return null;
     }
 
 
 
-    public String Gard(){
-        Long garderieId=0L;
-        String secretKey = "mySecretKey";
-        String username="";
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 
-        // Extraire le token JWT du header "Authorization"
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-
-            // Extraire le nom d'utilisateur du token JWT
-            Claims claims = Jwts.parser()
-                    .setSigningKey(secretKey)
-                    .parseClaimsJws(token)
-                    .getBody();
-            username = claims.getSubject();
-            garderieId = claims.get("garderieId", Long.class);
-
-//            // Utiliser le nom d'utilisateur pour obtenir l'utilisateur et la garderie
-//            Optional<User> myuser = userService.findByUsername(username);
-//            if (myuser.isPresent()){
-//                boolean testRole = myuser.get().getRoles().stream().
-//                        anyMatch(role -> role.getName().equals("ROLE_GARD"));
-//
-//                if(!testRole)throw new IllegalArgumentException("! Votre Garderie introuvable.");
-//                Optional<Garderie>garderie=garderieRepository.findByGerant(myuser.get());
-//                if (garderie.isPresent()){
-//                    if (garderie.get().getValidation())
-//                        return garderieRepository.findByGerant(myuser.get()).get();
-//                }
-//            }
-        }
-        return garderieId.toString();
-    }
 
     //------------------------ Delete Garderie  ----------------------------------
     @Override
@@ -177,9 +146,9 @@ public class GarderieService implements IGarderieService {
         if (garderieExiste.isPresent()){
             garderieExiste.get().setName(nomGarderie);
 
-        garderieRepository.save(garderieExiste.get());
+            garderieRepository.save(garderieExiste.get());
 
-        return "Garderie modifée";
+            return "Garderie modifée";
         }
         return "Le garderie introuvable";
     }
@@ -188,15 +157,15 @@ public class GarderieService implements IGarderieService {
     public String verificationGarderie(Long garderieId)
     {
 
-            Optional<Garderie> garderieExiste = garderieRepository.findById(garderieId);
-            if (garderieExiste.isPresent()){
-                garderieExiste.get().setValidation(!garderieExiste.get().getValidation());
+        Optional<Garderie> garderieExiste = garderieRepository.findById(garderieId);
+        if (garderieExiste.isPresent()){
+            garderieExiste.get().setValidation(!garderieExiste.get().getValidation());
 
-                garderieRepository.save(garderieExiste.get());
+            garderieRepository.save(garderieExiste.get());
 
-                return "La validité a été modifiée";
-            }
-            return "Le garderie introuvable";
+            return "La validité a été modifiée";
+        }
+        return "Le garderie introuvable";
 
     }
 

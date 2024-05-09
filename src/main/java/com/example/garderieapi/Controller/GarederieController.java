@@ -25,16 +25,16 @@ public class GarederieController {
     }
     @JsonIgnore
     @GetMapping("/Admin/allGarderie")
-    public ResponseEntity<List<Garderie>> getAllGardedrie(){
+    public ResponseEntity<List<Garderie>> getAllGardedrie(@RequestParam int page,@RequestParam int size ){
 
-        List<Garderie> allGarderie= garderieService.getAllGarderie();
+        List<Garderie> allGarderie= garderieService.getAllGarderie(page, size);
         if (allGarderie.isEmpty()) return new ResponseEntity<>(allGarderie, HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(allGarderie, HttpStatus.OK);
     }
 
     @GetMapping("/Admin/AllGerants")
     public ResponseEntity<List<User>> getAllGerantsWithGardedrie(){
-        
+
         List<User> gerants = userService.getUserByRolesName("ROLE_GARDERIE");
         if (gerants == null) return new ResponseEntity<>(gerants, HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(gerants, HttpStatus.OK);

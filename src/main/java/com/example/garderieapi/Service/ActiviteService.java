@@ -22,16 +22,16 @@ public class ActiviteService implements  ActiviteServiceImpl {
 
     @Override
     public List<Activite> getAllActivites() {
-            User responsable = responsableService.ResponsableConnectee();
-            Garderie garderie = garderieService.GarderieConnectee();
-            if (responsable!=null) {
-                return activiteRepository.findByResponsable(responsable);
-            }
-            else if (garderie != null) {
-                return activiteRepository.findByGarderie(garderie);
-            }
-            return null;
+        User responsable = responsableService.ResponsableConnectee();
+        Garderie garderie = garderieService.GarderieConnectee();
+        if (responsable!=null) {
+            return activiteRepository.findByResponsable(responsable);
         }
+        else if (garderie != null) {
+            return activiteRepository.findByGarderie(garderie);
+        }
+        return null;
+    }
 
     @Override
     public Activite getActiviteById(Long id) {
