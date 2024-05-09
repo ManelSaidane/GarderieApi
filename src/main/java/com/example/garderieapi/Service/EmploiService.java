@@ -45,10 +45,9 @@ public class EmploiService implements IEmploiService{
         if (file.isEmpty())return new  ResponseEntity<>("! Vérifier la saisie de fichier",HttpStatus.BAD_REQUEST);
 
         if (!(file.getOriginalFilename().toLowerCase().endsWith(".jpg") ||
-                file.getOriginalFilename().toLowerCase().endsWith(".jpeg") ||
-                file.getOriginalFilename().toLowerCase().endsWith(".png") ||
-                file.getOriginalFilename().toLowerCase().endsWith(".pdf")))
-
+                !file.getOriginalFilename().toLowerCase().endsWith(".jpeg") ||
+                !file.getOriginalFilename().toLowerCase().endsWith(".png") ||
+                !file.getOriginalFilename().toLowerCase().endsWith(".pdf")))
         {
             return new  ResponseEntity<>("Vérifier type de vote ficher",HttpStatus.BAD_REQUEST);
         }

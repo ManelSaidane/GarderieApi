@@ -1,26 +1,24 @@
 package com.example.garderieapi.Controller;
 
-import com.example.garderieapi.Repository.EmploiRepository;
 import com.example.garderieapi.Service.EmploiService;
 import com.example.garderieapi.dto.EmploiDto;
 import com.example.garderieapi.entity.Emploi;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.io.IOException;
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/v1")
 public class EmploiController {
 
     private final EmploiService emploiService;
-    private final EmploiRepository emploiRepository;
-    public EmploiController(EmploiService emploiService, EmploiRepository emploiRepository) {
+
+    public EmploiController(EmploiService emploiService) {
         this.emploiService = emploiService;
-        this.emploiRepository = emploiRepository;
     }
 
     @PostMapping("/Garderie/Groupe/{idGroupe}/AddEmploi")
@@ -28,40 +26,22 @@ public class EmploiController {
 
         return emploiService.CreateEmploi(emploi,idGroupe);
     }
-    @GetMapping("/Emplois")
-    public ResponseEntity<List<Emploi>> getAllEmplois() {
-        List<Emploi> emplois = emploiRepository.findAll();
-        // Récupérer l'URL de base où les fichiers sont stockés sur le serveur
-        String baseUrl = "http://localhost:8080/files/Emploi/";
-        // Parcourir les emplois et mettre à jour les noms de fichiers par les URL complètes
-        emplois.forEach(emploi -> emploi.setFileName(baseUrl + emploi.getFileName()));
-        return new ResponseEntity<>(emplois, HttpStatus.OK);
-    }
-
 
     @GetMapping("/Garderie/Groupe/{idGroupe}/Emploi")
-    public ResponseEntity<Emploi> getEmploiForGarderie(@PathVariable Long idGroupe) {
-        Emploi emploi = emploiService.getEmploiByGroupeForGarderie(idGroupe);
-        if (emploi == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(emploi, HttpStatus.OK);
+    public ResponseEntity<byte[]> getEmploiForGarderie(@PathVariable Long idGroupe) throws IOException {
+
+
+        return emploiService.getEmploiByGroupeForGarderie(idGroupe);
     }
 
-
     @GetMapping("/Responsable/Groupe/{idGroupe}/Emploi")
-    public ResponseEntity<Emploi> getEmploiForResponsable(@PathVariable Long idGroupe) {
-        if (emploiService.getEmploiByGroupeForResponsable(idGroupe)==null)
-            return new ResponseEntity<>(emploiService.getEmploiByGroupeForResponsable(idGroupe), HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(emploiService.getEmploiByGroupeForResponsable(idGroupe), HttpStatus.OK);
+    public ResponseEntity<byte[]> getEmploiForResponsable(@PathVariable Long idGroupe) throws IOException {
+        return emploiService.getEmploiByGroupeForResponsable(idGroupe);
     }
 
     @GetMapping("/Parent/{enfantId}/Emploi")
-    public ResponseEntity<Emploi> getEmploiForParent(@PathVariable Long enfantId) {
-        if (emploiService.getEmploiByEnfantForParent(enfantId)==null)
-            return new ResponseEntity<>(emploiService.getEmploiByEnfantForParent(enfantId), HttpStatus.NOT_FOUND);
-
-        return new ResponseEntity<>(emploiService.getEmploiByEnfantForParent(enfantId), HttpStatus.FOUND);
+    public ResponseEntity<byte[]> getEmploiForParent(@PathVariable Long enfantId) throws IOException {
+        return emploiService.getEmploiByGroupeForResponsable(enfantId);
     }
 
 
