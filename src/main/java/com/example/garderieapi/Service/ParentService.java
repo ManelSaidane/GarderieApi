@@ -36,8 +36,8 @@ public class ParentService implements IParentService {
     @Override
     public String createParent(String nom, String prenom,
                                String email, int numero,
-                               String password, String role,
-                               String enfantNom, String enfantPrenom, String enfantNiveau)
+                               String password, String role
+                              )
     {
         if(!role.equals("ROLE_PARENT")){
             throw new IllegalArgumentException("! Échec: Vérifier le rôle");
@@ -49,7 +49,7 @@ public class ParentService implements IParentService {
         user.setGarderieParent(garderie);
 
         //--creation Enfant--
-        if (enfantNom.isEmpty() || enfantPrenom.isEmpty()||enfantNiveau.isEmpty())
+     /*   if (enfantNom.isEmpty() || enfantPrenom.isEmpty()||enfantNiveau.isEmpty())
             return "! Échec: Vérifier les paramètre d'enfant" ;
         Enfant enfant= new Enfant();
         enfant.setNom(enfantNom);
@@ -58,7 +58,7 @@ public class ParentService implements IParentService {
         enfant.setGarderie(garderie);
         enfantRepository.save(enfant);
         //---------------------------
-        user.setEnfants(Collections.singleton(enfant));
+        user.setEnfants(Collections.singleton(enfant));*/
         userService.saveUser(user);
         return "Parent créé ";
     }

@@ -5,8 +5,6 @@ import com.example.garderieapi.Repository.UserRepository;
 import com.example.garderieapi.entity.Garderie;
 import com.example.garderieapi.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -55,12 +53,27 @@ public class GarderieService implements IGarderieService {
     }
 
     //------------------------ Get all Garderies  ----------------------------------
-    @Override
+  /*  @Override
     public List<Garderie> getAllGarderie(int page, int size) {
         Pageable pageable= PageRequest.of(page, size);
         List<Garderie> garderies= garderieRepository.findAll(pageable).getContent();
         return garderies;
     }
+*/
+    @Override
+    public List<Garderie> getAllGarderie() {
+        List<Garderie> garderies = garderieRepository.findAll();
+        for (Garderie garderie : garderies) {
+            Optional<User> gerantOptional = userRepository.findById(garderie.getGerant().getId());
+            if (gerantOptional.isPresent()) {
+                User gerant = gerantOptional.get();
+                garderie.getGerant().setEmail(gerant.getEmail());
+                garderie.getGerant().setNumero(gerant.getNumero());
+            }
+        }
+        return garderies;
+    }
+
 
     //------------------------ Get Garderies By nom ----------------------------------
     @Override
@@ -74,14 +87,15 @@ public class GarderieService implements IGarderieService {
     //------------------------ Get Garderie By id ----------------------------------
     @Override
     public Garderie getGarderieById(Long garderieId) {
+        Optional<Garderie> garderieOptional = garderieRepository.findById(garderieId);
+        return garderieOptional.orElse(null);
+    }
 
-        Garderie garderie = null;
-        Optional<Garderie> garderieGet=garderieRepository.findById(garderieId);
-        if (garderieGet.isPresent()){
-            garderie = garderieGet.get();
-        }
 
-        return garderie;
+
+    @Override
+    public List<Garderie> getAllGarderie(int page, int size) {
+        return null;
     }
 
 

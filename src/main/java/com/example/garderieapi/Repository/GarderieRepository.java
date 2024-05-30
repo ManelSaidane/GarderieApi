@@ -2,6 +2,7 @@ package com.example.garderieapi.Repository;
 
 import com.example.garderieapi.entity.Garderie;
 import com.example.garderieapi.entity.User;
+import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -13,4 +14,6 @@ public interface GarderieRepository extends JpaRepository<Garderie,Long>{
    Optional<Garderie> findByName(String name);
    Optional<Garderie> findById(Long id);
    List<Garderie> findByValidation(Boolean valid);
+
+
 }

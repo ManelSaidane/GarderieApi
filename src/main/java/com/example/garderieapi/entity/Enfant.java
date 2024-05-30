@@ -11,7 +11,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name ="Enfants")
+@Table(name ="Enfants2")
 public class Enfant {
 
     @Id
@@ -27,8 +27,11 @@ public class Enfant {
     @Column(nullable = false)
     private String niveau;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade= CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "groupe_id")
     private Groupe groupe;
+
+
 
     @ManyToOne (fetch = FetchType.EAGER, cascade= CascadeType.ALL)
     private Garderie garderie;

@@ -8,13 +8,13 @@ import java.util.Set;
 public interface IEnfantService {
 
 
-    Enfant CreateEnfant(Long idParent,String nom, String prenom, String niveau);
+    Enfant CreateEnfant(Long idParent,String nom, String prenom, String niveau , Long groupe);
 
     String UpdateEnfant(long enfantId, String nom, String prenom, String niveau, Long idGroupe);
 
     String AjouterEnfantAGroupe(long enfantId, long groupeId);
 
-    List<Enfant> GetEnfantsByGarderie();
+    List<?> GetEnfantsByGarderie();
 
     List<Enfant> GetEnfantsByNomAndPrenomAndGarderie(String nom,String prenom);
 

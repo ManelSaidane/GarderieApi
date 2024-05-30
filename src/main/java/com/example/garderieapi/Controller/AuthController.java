@@ -2,12 +2,13 @@ package com.example.garderieapi.Controller;
 
 
 import com.example.garderieapi.Config.JwtTokenProvider;
+import com.example.garderieapi.Repository.GarderieRepository;
 import com.example.garderieapi.Repository.UserRepository;
 import com.example.garderieapi.Service.*;
 
 import com.example.garderieapi.dto.LoginDto;
 import com.example.garderieapi.dto.SignUpDto;
-import com.example.garderieapi.entity.Role;
+import com.example.garderieapi.entity.Garderie;
 import com.example.garderieapi.entity.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 
 @CrossOrigin(origins = "*")
@@ -39,15 +38,17 @@ public class AuthController {
 
     private final GarderieService garderieService;
 
+    private final GarderieRepository garderieRepository;
     private final ParentService parentService;
     private final ResponsableService responsableService;
 
-    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, JwtTokenProvider jwtTokenProvider, UserService userService, GarderieService garderieService, ParentService parentService, ResponsableService responsableService) {
+    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, JwtTokenProvider jwtTokenProvider, UserService userService, GarderieService garderieService, GarderieRepository garderieRepository, ParentService parentService, ResponsableService responsableService) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userService = userService;
         this.garderieService = garderieService;
+        this.garderieRepository = garderieRepository;
         this.parentService = parentService;
         this.responsableService = responsableService;
     }
@@ -69,6 +70,13 @@ public class AuthController {
             // Récupérer le rôle de l'utilisateur à partir de son email
             String role = userService.getRoleByEmail(userDetails.getUsername());
             User user = userService.getByEmail(userDetails.getUsername()).get();
+            if (role.equals("ROLE_GARD")) {
+                Garderie garderie = garderieRepository.findByGerant(user).get();
+                if (garderie == null || !garderie.getValidation()) {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                            .body("La garderie n'est pas validée.");
+                }
+            }
 
             // Si aucun rôle n'est trouvé pour cet utilisateur, renvoyer une réponse 401 Unauthorized
             if (role == null) {
@@ -87,6 +95,7 @@ public class AuthController {
             // Retourner une réponse 200 OK avec les informations de connexion
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {
+
             // Gérer les erreurs d'authentification
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Échec de l'authentification : " + e.getMessage());
@@ -182,8 +191,7 @@ public class AuthController {
         {
             resultat=parentService.createParent(signUpDto.getNom(),signUpDto.getPrenom(),
                     signUpDto.getEmail(),signUpDto.getNumero(),signUpDto.getPassword(),
-                    signUpDto.getRole(),signUpDto.getNomEnfant(),signUpDto.getPrenomEnfant(),
-                    signUpDto.getNiveauEnfant());
+                    signUpDto.getRole());
         }
         return new ResponseEntity<>(resultat, HttpStatus.OK);
     }

@@ -44,14 +44,16 @@ public class EnfantService implements IEnfantService {
 
     //------------------------ Create Enfant ----------------------------------
     @Override
-    public Enfant CreateEnfant(Long idParent,String nom, String prenom, String niveau) {
+    public Enfant CreateEnfant(Long idParent,String nom, String prenom, String niveau , Long groupe) {
         if (nom.isEmpty() || prenom.isEmpty()||niveau.isEmpty())
             return null;
         Enfant enfant= new Enfant();
         enfant.setNom(nom);
         enfant.setPrenom(prenom);
         enfant.setNiveau(niveau);
+        enfant.setGroupe(groupeService.getGroupeById(groupe));
         enfant.setGarderie(garderieService.GarderieConnectee());
+
         Enfant enfantSave= enfantRepository.save(enfant);
         parentService.addEnfantToParent(idParent,enfant);
         return enfantSave;
@@ -98,7 +100,7 @@ public class EnfantService implements IEnfantService {
 
     //------------------------ Get Enfants By Garderie ----------------------------------
     @Override
-    public List<Enfant> GetEnfantsByGarderie() {
+    public List<?> GetEnfantsByGarderie() {
         Garderie garderie=garderieService.GarderieConnectee();
         if (garderie==null) throw new IllegalArgumentException("! Échec: il ya problème d'autorisation");
         return enfantRepository.findByGarderie(garderie);

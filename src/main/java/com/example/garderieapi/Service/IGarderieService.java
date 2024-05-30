@@ -13,6 +13,17 @@ public interface IGarderieService {
 
     Garderie getGarderieById(Long id);
     List<Garderie> getAllGarderie(int page, int size) ;
+
+    //------------------------ Get all Garderies  ----------------------------------
+  /*  @Override
+    public List<Garderie> getAllGarderie(int page, int size) {
+        Pageable pageable= PageRequest.of(page, size);
+        List<Garderie> garderies= garderieRepository.findAll(pageable).getContent();
+        return garderies;
+    }
+*/
+    List<Garderie> getAllGarderie();
+
     Garderie getGarderieByNom(String nomGarderie);
     List<User> getGerants();
 

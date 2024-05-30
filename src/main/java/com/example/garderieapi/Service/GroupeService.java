@@ -31,7 +31,7 @@ public class GroupeService implements IgroupeService {
 
     //------------------------ Create Groupe----------------------------------
     @Override
-    public Groupe createGroupe(String nom,String salle,String niveau) {
+    public Groupe createGroupe(String nom,String salle,String niveau, Long IdResponsable) {
         Garderie garderie= garderieService.GarderieConnectee();
         if (garderie ==null) throw new IllegalArgumentException("! accès interdit: Vous êtes n'est pas garderie");
         Groupe groupe = new Groupe();
@@ -39,6 +39,7 @@ public class GroupeService implements IgroupeService {
         groupe.setSalle(salle);
         groupe.setNiveau(niveau);
         groupe.setGarderie(garderie);
+        groupe.setResponsables(userService.getUserById(IdResponsable).get());
         return groupeRepository.save(groupe);
     }
 
@@ -103,6 +104,34 @@ public class GroupeService implements IgroupeService {
 
 
     //------------------------ updateGroupe----------------------------------
+
+    @Override
+    public Groupe updateGroupe2(Long idGroupe, String nom,String salle ,String niveau) {
+        Optional<Groupe> existingGroupe = groupeRepository.findById(idGroupe);
+        Garderie garderie=garderieService.GarderieConnectee();
+        if (existingGroupe.isPresent()) {
+
+        /*   if (!existingGroupe.get().getGarderie().equals(garderie))
+                throw new IllegalArgumentException("! Accès interdit: cette groupe appartient une autre garderie");*/
+
+            Groupe groupeToUpdate = existingGroupe.get();
+
+        /*    if (nom.isEmpty())    nom=existingGroupe.get().getNom();
+            if (salle.isEmpty())  salle=existingGroupe.get().getSalle();
+            if (niveau.isEmpty()) niveau=existingGroupe.get().getNiveau();*/
+
+
+
+            groupeToUpdate.setNom(nom);
+            groupeToUpdate.setSalle(salle);
+            groupeToUpdate.setNiveau(niveau);
+
+
+            return groupeRepository.save(groupeToUpdate);
+        } else {
+            throw new IllegalArgumentException("! Groupe avec l'ID " + idGroupe + " introuvable.");
+        }
+    }
     @Override
     public Groupe updateGroupe(Long idGroupe, String nom,String salle ,String niveau,Long idRespondable) {
         Optional<Groupe> existingGroupe = groupeRepository.findById(idGroupe);
@@ -118,10 +147,7 @@ public class GroupeService implements IgroupeService {
             if (salle.isEmpty())  salle=existingGroupe.get().getSalle();
             if (niveau.isEmpty()) niveau=existingGroupe.get().getNiveau();
 
-            if (idRespondable!=null){
-                User responsable=responsableService.getResponsableById(idRespondable);
-                groupeToUpdate.getResponsables().add(responsable);
-            }
+
 
             groupeToUpdate.setNom(nom);
             groupeToUpdate.setSalle(salle);
@@ -140,7 +166,7 @@ public class GroupeService implements IgroupeService {
         List<Groupe> groupes=getGroupeByGarderie();
         Groupe groupe = getGroupeById(id);
         if(! groupes.contains(groupe)) return "! Échec: le groupe introuvable.";
-        groupe.getResponsables().clear();
+      //  groupe.getResponsables().clear();
         groupeRepository.deleteById(id);
         return "Le groupe a été supprimé";
     }
@@ -156,7 +182,7 @@ public class GroupeService implements IgroupeService {
             if (!groupe.get().getGarderie().equals(garderie)) return "! Groupe introuvable";
             Optional<User> responsable = userService.getUserById(userId);
             if (responsable.isPresent()){
-                groupe.get().getResponsables().add(responsable.get());
+                groupe.get().getResponsables();
                 groupeRepository.save(groupe.get());
                 return "Responsable a ajouté avec succès";
             }else return "Responsable introvable";

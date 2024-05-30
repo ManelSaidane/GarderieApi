@@ -27,7 +27,7 @@ public class Garderie {
 
 
     @OneToOne
-    @JsonIgnore
+
     private User gerant;
 
 }

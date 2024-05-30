@@ -40,7 +40,7 @@ public class ActiviteController {
     public ResponseEntity<Activite> getActiviteById(@PathVariable Long id) {
         Activite activite= activiteService.getActiviteById(id);
         if (activite==null) return new ResponseEntity<>(activite, HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(activite, HttpStatus.FOUND);
+        return new ResponseEntity<>(activite, HttpStatus.OK);
     }
 
     @GetMapping({"Garderie/Activite","Responsable/Activite"})

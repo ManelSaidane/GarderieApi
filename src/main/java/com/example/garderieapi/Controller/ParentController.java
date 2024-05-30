@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/v1")
 public class ParentController {
     private final ParentService parentService;
@@ -20,11 +21,31 @@ public class ParentController {
     }
 
 
-    @PostMapping("/Garderie/GetParents")
+
+
+    @PostMapping("/Garderie/Parent/Create")
+    public ResponseEntity<String> createParent(@RequestBody ParentDto request) {
+        try {
+            String result = parentService.createParent(
+                    request.getNom(),
+                    request.getPrenom(),
+                    request.getEmail(),
+                    request.getNumero(),
+                    request.getPassword(),
+                    "ROLE_PARENT"
+            );
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping("/Garderie/GetParents")
     public ResponseEntity<List<User>> GetParents(){
         List<User> parnts= parentService.getParentByGarderie();
        if (parnts.isEmpty()) return new ResponseEntity<>(parnts, HttpStatus.NOT_FOUND);
-       return new ResponseEntity<>(parnts, HttpStatus.FOUND);
+       return new ResponseEntity<>(parnts, HttpStatus.OK);
     }
     @DeleteMapping("/Garderie/DeleteParent/{idParent}")
     public ResponseEntity<String> DeleteParent(@PathVariable Long idParent){

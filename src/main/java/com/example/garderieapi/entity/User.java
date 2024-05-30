@@ -57,7 +57,7 @@ public class User {
 
     @OneToMany (fetch = FetchType.EAGER, cascade= CascadeType.ALL)
     @JoinTable(
-            name="Parent_Enfant",
+            name="Parent_Enfant2",
             joinColumns={@JoinColumn(name="parent_id", referencedColumnName="id")},
             inverseJoinColumns={@JoinColumn(name="enfant_id", referencedColumnName="id")})
     private Set<Enfant> Enfants;

@@ -8,8 +8,8 @@ import java.util.List;
 public interface IParentService {
     String createParent(String nom, String prenom,
                         String email, int numero,
-                        String password, String role,
-                        String enfantNom, String enfantPrenom, String enfantNiveau);
+                        String password, String role
+                        );
 
     List<User> getParentByGarderie();
 

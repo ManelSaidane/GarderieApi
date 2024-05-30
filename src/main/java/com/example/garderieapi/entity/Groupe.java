@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Data
-@Table(name="Groupes")
+@Table(name="Groupes2")
 public class Groupe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,18 +29,18 @@ public class Groupe {
 
     @ManyToOne (fetch = FetchType.EAGER, cascade= CascadeType.ALL)
     @JsonIgnore
-    @JoinTable(
-            name="Groupe_Garderie",
+  /* @JoinTable(
+           // name="Groupe_Garderie",
             joinColumns={@JoinColumn(name="groupe_id", referencedColumnName="id")},
-            inverseJoinColumns={@JoinColumn(name="garderie_id", referencedColumnName="id")})
+            inverseJoinColumns={@JoinColumn(name="garderie_id", referencedColumnName="id")})*/
     private Garderie garderie;
 
-    @Column(nullable = false)
-    @ManyToMany(fetch = FetchType.EAGER, cascade= CascadeType.ALL)
-    @JoinTable(
+    @JoinColumn(nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade= CascadeType.ALL)
+  /*  @JoinTable(
             name="groupe_responsable",
             joinColumns={@JoinColumn(name="groupe_id", referencedColumnName="id")},
-            inverseJoinColumns={@JoinColumn(name="user_id", referencedColumnName="id")})
-    private List<User> responsables;
+            inverseJoinColumns={@JoinColumn(name="user_id", referencedColumnName="id")})*/
+    private User responsables;
 
 }

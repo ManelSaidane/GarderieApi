@@ -9,8 +9,8 @@ import java.util.Optional;
 
 public interface GroupeRepository extends JpaRepository<Groupe,Long> {
     List<Groupe> findByGarderie(Garderie garderie);
-
     Optional<Groupe> findById(Long id);
     Optional<Groupe>findByIdAndGarderie(Long id,Garderie garderie);
     List<Groupe>findByResponsablesId(Long responsables_id);
+    void deleteByResponsablesId(Long responsables_id);
 }

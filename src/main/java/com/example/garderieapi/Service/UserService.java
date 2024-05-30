@@ -1,12 +1,12 @@
 package com.example.garderieapi.Service;
 
+import com.example.garderieapi.Repository.GroupeRepository;
 import com.example.garderieapi.Repository.RoleRepository;
 import com.example.garderieapi.Repository.UserRepository;
 import com.example.garderieapi.Repository.UserRoleRepositoryImpl;
 import com.example.garderieapi.entity.Garderie;
 import com.example.garderieapi.entity.Role;
 import com.example.garderieapi.entity.User;
-import jakarta.transaction.Transactional;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.yaml.snakeyaml.tokens.Token;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,12 +26,14 @@ public class UserService implements UserDetailsService, IUserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
 
+    private  final GroupeRepository groupeRepository;
     private final UserRoleRepositoryImpl userRoleRepository; // Correction du nom ici
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, UserRoleRepositoryImpl userRoleRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, GroupeRepository groupeRepository, UserRoleRepositoryImpl userRoleRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
+        this.groupeRepository = groupeRepository;
         this.userRoleRepository = userRoleRepository; // Correction ici
     }
     //------------------------ Auth User ----------------------------------
@@ -213,7 +214,7 @@ public class UserService implements UserDetailsService, IUserService {
         Optional<User> User = userRepository.findById(userId);
         if (User.isPresent()) {
             User user = User.get();
-
+            groupeRepository.deleteByResponsablesId(userId);
             user.getRoles().clear();
 
             userRepository.deleteById(userId);

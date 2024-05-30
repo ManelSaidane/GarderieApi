@@ -25,6 +25,8 @@ public class ResponsableService implements IResponsableService{
     private final UserRepository userRepository;
 
 
+
+
     public ResponsableService(UserService userService, GarderieService garderieService, UserRepository userRepository) {
         this.userService = userService;
         this.garderieService = garderieService;
@@ -130,15 +132,21 @@ public class ResponsableService implements IResponsableService{
     //------------------------ Delete Responsable ----------------------------------
 
     @Override
-    public String deleteResponsable(Long id){
-        Garderie garderie=garderieService.GarderieConnectee();
-        if (garderie==null) throw new IllegalArgumentException("! Échec: il ya problème d'autorisation");
-        Optional<User> responsable = userRepository.findByIdAndGarderieRespo(id,garderie);
-        if (responsable.isPresent()){
+    public String deleteResponsable(Long id) {
+        Garderie garderie = garderieService.GarderieConnectee();
+        if (garderie == null) {
+            throw new IllegalArgumentException("! Échec: il ya problème d'autorisation");
+        }
+
+        Optional<User> responsable = userRepository.findByIdAndGarderieRespo(id, garderie);
+        if (responsable.isPresent()) {
+            // Set garderieRespo to null before deleting the user
+            responsable.get().setGarderieRespo(null);
             userService.deleteUserById(id);
-            return "Parent supprimé.";
+            return "Responsable supprimé.";
         }
         return null;
     }
+
 
 }

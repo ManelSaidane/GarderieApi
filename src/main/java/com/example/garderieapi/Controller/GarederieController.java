@@ -25,9 +25,9 @@ public class GarederieController {
     }
     @JsonIgnore
     @GetMapping("/Admin/allGarderie")
-    public ResponseEntity<List<Garderie>> getAllGardedrie(@RequestParam int page,@RequestParam int size ){
+    public ResponseEntity<List<Garderie>> getAllGardedrie(){
 
-        List<Garderie> allGarderie= garderieService.getAllGarderie(page, size);
+        List<Garderie> allGarderie= garderieService.getAllGarderie();
         if (allGarderie.isEmpty()) return new ResponseEntity<>(allGarderie, HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(allGarderie, HttpStatus.OK);
     }
@@ -44,10 +44,12 @@ public class GarederieController {
 
     @GetMapping({"/Admin/Garderie/{garderieId}","/Garderie/{garderieId}","/Responsable/Groupe/Garderie/{garderieId}","/Parent/Garderie/{garderieId}"})
     public ResponseEntity<Garderie> getGarderieById(@PathVariable Long garderieId){
-
-        Garderie garderie=garderieService.getGarderieById(garderieId);
-        if (garderie==null) return new ResponseEntity<>(garderie, HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(garderie, HttpStatus.OK);
+        Garderie garderie = garderieService.getGarderieById(garderieId);
+        if (garderie == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(garderie, HttpStatus.OK);
+        }
     }
     @GetMapping("/Admin/Garderies")
     public ResponseEntity<Garderie> getGarderieById(@RequestBody String nomGarderie){

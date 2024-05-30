@@ -24,16 +24,16 @@ public class EnfantController {
     public ResponseEntity<String> CreateEnfant(@RequestBody EnfantDto enfantDto){
 
         Enfant enfant=enfantService.CreateEnfant(enfantDto.getIdParent(),enfantDto.getNom(),enfantDto.getPrenom(),
-                enfantDto.getNiveau());
+                enfantDto.getNiveau() , enfantDto.getIdGroupe());
         if (enfant==null) return new ResponseEntity<>("! Echec: il ya un paramètre vide.", HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>("Enfant créé.", HttpStatus.CREATED);
     }
 
     @GetMapping("/Garderie/Enfant/GetAll")
-    public List<Enfant> GetAllEnfant(){
-        List<Enfant> enfants=enfantService.GetEnfantsByGarderie();
+    public List<?> GetAllEnfant(){
+        List<?> enfants=enfantService.GetEnfantsByGarderie();
         if (enfants.isEmpty())return new ResponseEntity<>(enfants, HttpStatus.NOT_FOUND).getBody();
-        return new ResponseEntity<>(enfants, HttpStatus.FOUND).getBody();
+        return new ResponseEntity<>(enfants, HttpStatus.OK).getBody();
     }
 
     @PutMapping("/Garderie/Enfant/{idEnfant}/Update")
@@ -86,7 +86,7 @@ public class EnfantController {
         if (enfants.isEmpty())
             return new ResponseEntity<>(enfants,HttpStatus.NOT_FOUND);
 
-        return new ResponseEntity<>(enfants,HttpStatus.FOUND);
+        return new ResponseEntity<>(enfants,HttpStatus.OK);
     }
 
 

@@ -4,8 +4,7 @@ package com.example.garderieapi.Controller;
 import com.example.garderieapi.Repository.UserRepository;
 import com.example.garderieapi.Service.GarderieService;
 import com.example.garderieapi.Service.ResponsableService;
-import com.example.garderieapi.dto.UpdateResponsableDto;
-import com.example.garderieapi.entity.Garderie;
+import com.example.garderieapi.dto.ResponsableDto;
 import com.example.garderieapi.entity.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +36,7 @@ public class ResponsableController {
     }
     @PutMapping("/Garderie/UpdateResponsable/{idResponsable}")
     public ResponseEntity<String> Update1Responsable(@PathVariable Long idResponsable,
-                                                    @RequestBody UpdateResponsableDto updateResponsableDto) {
+                                                    @RequestBody ResponsableDto updateResponsableDto) {
 
         String result= responsableService.updateResponsable(
                             idResponsable,
@@ -50,9 +49,22 @@ public class ResponsableController {
         return new  ResponseEntity<>(result,HttpStatus.UPGRADE_REQUIRED);
     }
 
+    @PostMapping("/Garderie/CreateResponsable")
+    public ResponseEntity<?>CreateResponsable(@RequestBody ResponsableDto responsableDto){
+
+        String result = responsableService.createResponsable(responsableDto.getNom(), responsableDto.getPrenom(),responsableDto.getEmail()
+        , responsableDto.getNumero(),responsableDto.getPassword(),"ROLE_RESPONSABLE");
+
+        if(result.equals("Responsable créé "))
+            return new  ResponseEntity<>(result,HttpStatus.CREATED);
+
+        return new  ResponseEntity<>(result,HttpStatus.BAD_REQUEST);
+
+    }
+
     @PutMapping("/Responsable/UpdateResponsable/{idResponsable}")
     public ResponseEntity<String> Update2Responsable(@PathVariable Long idResponsable,
-                                                    @RequestBody UpdateResponsableDto updateResponsableDto) {
+                                                    @RequestBody ResponsableDto updateResponsableDto) {
 
         String result= responsableService.updateResponsable(
                 idResponsable,
@@ -67,10 +79,12 @@ public class ResponsableController {
 
     @DeleteMapping("/Garderie/DeleteResponsable/{idResponsable}")
     public ResponseEntity<String> DeleteResponsable(@PathVariable Long idResponsable) {
-
-        String result= responsableService.deleteResponsable(idResponsable);
-        if (result==null) return new ResponseEntity<>("Responsable introuvable",HttpStatus.NOT_FOUND);
-        return new  ResponseEntity<>(result,HttpStatus.OK);
+        String result = responsableService.deleteResponsable(idResponsable);
+        if (result == null) {
+            return new ResponseEntity<>("Responsable introuvable", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
 
 }

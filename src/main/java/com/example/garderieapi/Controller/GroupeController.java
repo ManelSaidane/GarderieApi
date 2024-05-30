@@ -33,7 +33,8 @@ public class GroupeController {
             return new ResponseEntity<>("Saisir le niveau !", HttpStatus.BAD_REQUEST);
         }
 
-        Groupe createdGroupe = groupeService.createGroupe(groupeDto.getNom(),groupeDto.getSalle(),groupeDto.getNiveau());
+
+        Groupe createdGroupe = groupeService.createGroupe(groupeDto.getNom(),groupeDto.getSalle(),groupeDto.getNiveau(),groupeDto.getIdResponsable());
 
         if (createdGroupe==null) return new ResponseEntity<>("! il ya un probleme de création de groupe", HttpStatus.BAD_REQUEST);
 
@@ -41,9 +42,18 @@ public class GroupeController {
     }
 
 
+    @PutMapping({"/Responsable/UpdateGroupe/{id}"})
+    public ResponseEntity<String> updateGroupeResp(@PathVariable Long id, @RequestBody GroupeDto updatedGroupeDto) {
 
+        Groupe updatedGroupe = groupeService.updateGroupe2(id,updatedGroupeDto.getNom(),
+                updatedGroupeDto.getSalle(),updatedGroupeDto.getNiveau());
 
-    @PutMapping({"/Garderie/UpdateGroupe/{id}","/Responsable/UpdateGroupe/{id}"})
+        if (updatedGroupe == null)return new ResponseEntity<>("! il ya un probleme de mettre à jour de Groupe", HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>("! Le groupe a modifié", HttpStatus.OK);
+    }
+
+    @PutMapping({"/Garderie/UpdateGroupe/{id}"})
     public ResponseEntity<String> updateGroupe(@PathVariable Long id, @RequestBody GroupeDto updatedGroupeDto) {
 
         Groupe updatedGroupe = groupeService.updateGroupe(id,updatedGroupeDto.getNom(),

@@ -3,7 +3,7 @@ package com.example.garderieapi.dto;
 import lombok.Data;
 
 @Data
-public class UpdateResponsableDto {
+public class ResponsableDto {
     private String nom;
     private String prenom;
     private String email;
